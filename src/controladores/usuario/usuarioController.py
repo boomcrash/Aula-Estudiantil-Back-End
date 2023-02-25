@@ -1,159 +1,182 @@
-from flask import Blueprint, jsonify,request
+from fastapi import  FastAPI,Request
+from fastapi import APIRouter
+#import database for mysql
+import aiomysql
+#libreria que se importa de configuracion.py (contiene las configuraciones del server)
+from configuracion import configuracion
+#pydantic para validar datos
+from pydantic import BaseModel
+# parametros de peticiones http en body
+from fastapi.param_functions import Body
+#importacion de clases de usuario
+from clases.usuarioClass import usuarioClass
+from clases.usuarioClass import usuarioCreate
+from clases.usuarioClass import usuarioVerify
 
-user = Blueprint('user',__name__)
+user_router = APIRouter()
 
-@user.route('/getUsers',methods=['GET'])
-def getUsuarios():
-    conexion = user.conexion 
-    cursor = conexion.connection.cursor()
+async def getConexion():
+    conn = await aiomysql.connect(host=configuracion['development'].MYSQL_HOST, user=configuracion['development'].MYSQL_USER, password=configuracion['development'].MYSQL_PASSWORD, db=configuracion['development'].MYSQL_DB, charset='utf8', cursorclass=aiomysql.DictCursor)
+    return conn
+
+@user_router.get("getUsers")
+async def getUsers():
     try:
-        
-        sql = "Select * from usuario"
-        cursor.execute(sql)
-        datos = cursor.fetchall()
+        conn = await getConexion()
         usuarios=[]
-        for data in datos:
-            usuario = {'id_usuario': data[0], 'nombre_usuario': data[1], 'contrasena_usuario': data[2], 'rol_usuario': data[3]}
-            usuarios.append(usuario)
-        return jsonify({'data': usuarios, 'accion': "true"})
-    except:
-        return jsonify({'data': '','accion': "false"})
+        async with conn.cursor() as cur:
+            await cur.execute("SELECT * FROM usuario")
+            result = await cur.fetchall()
+            for data in result:
+                usuario = {'id_usuario': data['id_usuario'], 'nombre_usuario': data['nombre_usuario'], 'contrasena_usuario': data['contrasena_usuario'], 'rol_usuario': data['rol_usuario']}
+                usuarios.append(usuario)
+        return {'data': usuarios, 'accion': "true"}
+    except Exception as e:
+        return {'data': '', 'accion': "false"}
     finally:
-        cursor.close()
-    
-@user.route('/getUsersByUserName/<string:username>',methods=['GET'])
-def getUsersByUserName(username):
-    conexion = user.conexion 
-    cursor = conexion.connection.cursor()    
-    try:
+        conn.close()
 
-        sql = "Select * from usuario where nombre_usuario='{0}'".format(username)
-        cursor.execute(sql)
-        datos = cursor.fetchall()
+@user_router.get("getUsersByUserName/{username}")
+async def getUsersByUserName(username:str):
+    try:
+        conn = await getConexion()
         usuarios=[]
-        for data in datos:
-            usuario = {'id_usuario': data[0], 'nombre_usuario': data[1], 'contrasena_usuario': data[2], 'rol_usuario': data[3]}
-            usuarios.append(usuario)
-        return jsonify({'data': usuarios, 'accion': "true"})
-    except:
-        return jsonify({'data': '','accion': "false"})
+        async with conn.cursor() as cur:
+            await cur.execute("Select * from usuario where nombre_usuario='{0}'".format(username))
+            result = await cur.fetchall()
+            for data in result:
+                usuario = {'id_usuario': data['id_usuario'], 'nombre_usuario': data['nombre_usuario'], 'contrasena_usuario': data['contrasena_usuario'], 'rol_usuario': data['rol_usuario']}
+                usuarios.append(usuario)
+        return {'data': usuarios, 'accion': "true"}
+    except Exception as e:
+        return {'data': '', 'accion': "false"}
     finally:
-        cursor.close()
-   
+        conn.close()
 
-@user.route('/getUsersWithRol',methods=['GET'])
-def getUsuariosWithRol():
 
-    conexion = user.conexion 
-    cursor = conexion.connection.cursor()
+@user_router.get("getUsersWithRol")
+async def getUsersWithRol():
     try:
-        sql = "Select * from usuario INNER JOIN rol ON usuario.rol_usuario = rol.id_rol"
-        cursor.execute(sql)
-        datos = cursor.fetchall()
+        conn = await getConexion()
         usuarios=[]
-        for data in datos:
-            usuario = {'id_usuario': data[0], 'nombre_usuario': data[1], 'contrasena_usuario': data[2], 'rol_usuario': data[3],'nombre_rol': data[5]}
-            usuarios.append(usuario)
-        return jsonify({'data': usuarios, 'accion': "true"})
-        
-    except:
-        return jsonify({'data': '','accion': "false"})
+        async with conn.cursor() as cur:
+            await cur.execute("Select * from usuario INNER JOIN rol ON usuario.rol_usuario = rol.id_rol")
+            result = await cur.fetchall()
+            for data in result:
+                usuario = {'id_usuario': data['id_usuario'], 'nombre_usuario': data['nombre_usuario'], 'contrasena_usuario': data['contrasena_usuario'], 'rol_usuario': data['rol_usuario'],'nombre_rol': data['nombre_rol']}
+                usuarios.append(usuario)
+        return {'data': usuarios, 'accion': "true"}
+    except Exception as e:
+        return {'data': '', 'accion': "false"}
     finally:
-        cursor.close()
-    
-@user.route('/getUsersById/<int:id>',methods=['GET'])
-def getUsuariosById(id):
+        conn.close()
 
-    conexion = user.conexion 
-    cursor = conexion.connection.cursor()
+@user_router.get("usuarios/getRol")
+async def getRol():
     try:
-        sql = "Select * from usuario INNER JOIN rol ON usuario.rol_usuario = rol.id_rol where id_usuario={0}".format(id)
-        cursor.execute(sql)
-        datos = cursor.fetchone()
-        if datos != None:
-            usuario = {'id_usuario': datos[0], 'nombre_usuario': datos[1], 'contrasena_usuario': datos[2], 'rol_usuario': datos[3],'nombre_rol': datos[5]}
-            return jsonify({'data': usuario, 'accion': "true"})
-        else:    
-            return jsonify({'data': '','accion': "false"})
-    except:
-        return jsonify({'data': '','accion': "false"})
+        conn = await getConexion()
+        roles=[]
+        async with conn.cursor() as cur:
+            await cur.execute("Select * from rol")
+            result = await cur.fetchall()
+            for data in result:
+                usuario = {'id_rol': data['id_rol'],'nombre_rol': data['nombre_rol']}
+                roles.append(usuario)
+        return {'data': roles, 'accion': "true"}
+    except Exception as e:
+        return {'data': '', 'accion': "false"}
     finally:
-        cursor.close()
-    
-#getUsuarios con datos dependiendo si el rol_usuario  es docente o estudiante
-@user.route('/getUsersCompleteData/<int:id>',methods=['GET'])
-def getUsuariosWithRolById(id):
-    conexion = user.conexion 
-    cursor = conexion.connection.cursor()
+        conn.close()
+
+
+@user_router.get("getUsersById/{id}")
+async def getUsersById(id:int):
     try:
-        sql = "Select * from usuario INNER JOIN rol ON usuario.rol_usuario = rol.id_rol where id_usuario={0}".format(id)
-        cursor.execute(sql)
-        datos = cursor.fetchone()
-        if datos != None:
-            usuario = {'nombre_rol': datos[5]}
-            if datos[5] == "Docente":
-                sql = "Select * from usuario INNER JOIN docente ON usuario.id_usuario = docente.usuario_docente where usuario.id_usuario={0}".format(id)
-                cursor.execute(sql)
-                datos = cursor.fetchone()
-                usuario = {'id_usuario': datos[0], 'nombre_usuario': datos[1], 'contrasena_usuario': datos[2], 'rol_usuario': datos[3],'usuario_docente': datos[4],'nombres_docente': datos[5],'apellidos_docente': datos[6],'cedula_docente': datos[7],'fechaNacimiento_docente': datos[8],'edad_docente': datos[9],'direccion_docente': datos[10],'telefono_docente': datos[11],'email_docente': datos[12],'titulo_docente': datos[13],'nivelEducacion_docente': datos[14],'estado_docente': datos[15]}
-            elif datos[5] == "Estudiante":
-                sql = "Select * from usuario INNER JOIN estudiante ON usuario.id_usuario = estudiante.usuario_estudiante where usuario.id_usuario={0}".format(id)
-                cursor.execute(sql)
-                datos = cursor.fetchone()
-                usuario = {'id_usuario': datos[0], 'nombre_usuario': datos[1], 'contrasena_usuario': datos[2], 'rol_usuario': datos[3],'usuario_estudiante': datos[4],'nombres_estudiante': datos[5],'apellidos_estudiante': datos[6],'cedula_estudiante': datos[7],'fechaNacimiento_estudiante': datos[8],'edad_estudiante': datos[9],'direccion_estudiante': datos[10],'telefono_estudiante': datos[11],'email_estudiante': datos[12],'nivelEducacion_estudiante': datos[13],'promedioAnterior_estudiante': datos[14],'medio_estudiante': datos[15],'estado_estudiante': datos[16]}
-
-            return jsonify({'data': usuario, 'accion': "true"})
-        else:
-            return jsonify({'data': '','accion': "false"})
-    except:
-        return jsonify({'data': '','accion': "false"})
+        conn = await getConexion()
+        usuarios=[]
+        async with conn.cursor() as cur:
+            await cur.execute("Select * from usuario INNER JOIN rol ON usuario.rol_usuario = rol.id_rol where id_usuario={0}".format(id))
+            result = await cur.fetchall()
+            for datos in result:
+                usuario = {'id_usuario': datos['id_usuario'], 'nombre_usuario': datos['nombre_usuario'], 'contrasena_usuario': datos['contrasena_usuario'], 'rol_usuario': datos['rol_usuario'],'nombre_rol': datos['nombre_rol']}
+                usuarios.append(usuario)
+        return {'data': usuarios, 'accion': "true"}
+    except Exception as e:
+        return {'data': '', 'accion': "false"}
     finally:
-        cursor.close()
-    
+        conn.close()
 
 
-
-@user.route('/verifyUserByUser',methods=['POST'])
-def verifyUserByUser():
-    
-    conexion = user.conexion 
-    cursor = conexion.connection.cursor()
+@user_router.get("getUsersCompleteData/{id}")
+async def getUsersCompleteData(id:int):
     try:
-        username = request.json['username']
-        sql = "Select * from usuario where nombre_usuario='{0}' ".format(username)
-        cursor.execute(sql)
-        datos = cursor.fetchone()
-        if datos != None:
-            result={'existe':True}
-            return jsonify({'data': result, 'accion': "true"})
-        else:
-            result={'existe':False}
-            return jsonify({'data': result, 'accion': "false"})
-    except:
-        return jsonify({'data': '','accion': "false"})
+        conn = await getConexion()
+        usuarios=[]
+        async with conn.cursor() as cur:
+            await cur.execute("Select * from usuario INNER JOIN rol ON usuario.rol_usuario = rol.id_rol where id_usuario={0}".format(id))
+            result = await cur.fetchone()
+            nombre_rol = result['nombre_rol']
+            print(nombre_rol)
+            if nombre_rol != None:
+                if nombre_rol == "Docente":
+                    await cur.execute("Select * from usuario INNER JOIN docente ON usuario.id_usuario = docente.usuario_docente where usuario.id_usuario={0}".format(id))
+                    result = await cur.fetchone()
+
+                    usuario = {'id_usuario': result['id_usuario'], 'nombre_usuario': result['nombre_usuario'], 'contrasena_usuario': result['nombre_usuario'], 'rol_usuario': result['rol_usuario'],'usuario_docente': result['usuario_docente'],'nombres_docente': result['nombres_docente'],'apellidos_docente': result['apellidos_docente'],'cedula_docente': result['cedula_docente'],'fechaNacimiento_docente': result['fechaNacimiento_docente'],'edad_docente': result['edad_docente'],'direccion_docente': result['direccion_docente'],'telefono_docente': result['telefono_docente'],'email_docente': result['email_docente'],'titulo_docente': result['titulo_docente'],'nivelEducacion_docente': result['nivelEducacion_docente'],'estado_docente': result['estado_docente']}
+                    usuarios.append(usuario)
+
+                elif nombre_rol == "Estudiante":
+                    await cur.execute("Select * from usuario INNER JOIN estudiante ON usuario.id_usuario = estudiante.usuario_estudiante where usuario.id_usuario={0}".format(id))
+                    result = await cur.fetchone()
+
+                    usuario = {'id_usuario': result['id_usuario'], 'nombre_usuario': result['nombre_usuario'], 'contrasena_usuario': result['contrasena_usuario'], 'rol_usuario': result['rol_usuario'],'usuario_estudiante': result['usuario_estudiante'],'nombres_estudiante': result['nombres_estudiante'],'apellidos_estudiante': result['apellidos_estudiante'],'cedula_estudiante': result['cedula_estudiante'],'fechaNacimiento_estudiante': result['fechaNacimiento_estudiante'],'edad_estudiante': result['edad_estudiante'],'direccion_estudiante': result['direccion_estudiante'],'telefono_estudiante': result['telefono_estudiante'],'email_estudiante': result['email_estudiante'],'nivelEducacion_estudiante': result['nivelEducacion_estudiante'],'promedioAnterior_estudiante': result['promedioAnterior_estudiante'],'medio_estudiante': result['medio_estudiante'],'estado_estudiante': result['estado_estudiante']}
+                    usuarios.append(usuario)
+
+        return {'data': usuarios, 'accion': "true"}
+    except Exception as e:
+        return {'data': '', 'accion': "false"}
     finally:
-        cursor.close()
+        conn.close()
 
 
-@user.route('/verifyUserByUserAndPassword',methods=['POST'])
-def verifyUserByUserAndPassword():
-    
-    conexion = user.conexion 
-    cursor = conexion.connection.cursor()
+@user_router.post("verifyUserByUser")
+async def getUsersById(request: Request, user: usuarioCreate = Body(...)):
     try:
-        username = request.json['username']
-        password = request.json['password']
-        sql = "Select * from usuario where nombre_usuario='{0}' and contrasena_usuario='{1}'".format(username,password)
-        cursor.execute(sql)
-        datos = cursor.fetchone()
-        if datos != None:
-            result={'existe':True}
-            return jsonify({'data': result, 'accion': "true"})
-        else:
-            result={'existe':False}
-            return jsonify({'data': result, 'accion': "false"})
-    except:
-        return jsonify({'data': '','accion': "false"})
+        #obtener username por medio del body del api
+        username = user.nombre_usuario
+        conn = await getConexion()
+        resultado={}
+        async with conn.cursor() as cur:
+            await cur.execute("Select * from usuario where nombre_usuario='{0}' ".format(username))
+            result = await cur.fetchone()
+            if result != None:
+                resultado={'existe':True}
+            else:
+                resultado={'existe':False}
+        return {'data': resultado, 'accion': "true"}
+    except Exception as e:
+        return {'data': '', 'accion': "false"}
     finally:
-        cursor.close()
-    
+        conn.close()
+
+
+@user_router.post("verifyUserByUserAndPassword")
+async def getUsersById(request: Request, user: usuarioVerify = Body(...)):
+    try:
+        #obtener username por medio del body del api
+        username = user.nombre_usuario
+        password = user.contrasena_usuario
+        conn = await getConexion()
+        resultado={}
+        async with conn.cursor() as cur:
+            await cur.execute("Select * from usuario where nombre_usuario='{0}' and contrasena_usuario='{1}'".format(username,password))
+            result = await cur.fetchone()
+            if result != None:
+                resultado={'existe':True}
+            else:
+                resultado={'existe':False}
+        return {'data': resultado, 'accion': "true"}
+    except Exception as e:
+        return {'data': '', 'accion': "false"}
+    finally:
+        conn.close()

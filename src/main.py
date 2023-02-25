@@ -2,7 +2,6 @@
 from flask import Flask,jsonify,request
 #cors para permitir peticiones desde cualquier origen
 from flask_cors import CORS
-
 #libreria para conectar flask con mysql
 from flask_mysqldb import MySQL
 #libreria que se importa de configuracion.py (contiene las configuraciones del server)
