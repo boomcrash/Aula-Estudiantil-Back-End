@@ -4,10 +4,10 @@ class DevelopmentConfig():
     PORT=3000
     #host de conexion
     HOST="0.0.0.0"
-    MYSQL_HOST="localhost"
+    MYSQL_HOST="167.71.26.121"
     MYSQL_USER = "root"
     MYSQL_PASSWORD = ""
-    MYSQL_DB = "centroartesanal"
+    MYSQL_DB = "CENTROARTESANAL"
 
 configuracion={
     'development':DevelopmentConfig
