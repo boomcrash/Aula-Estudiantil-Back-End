@@ -21,8 +21,9 @@ async def getConexion():
 
 @user_router.get("getUsers")
 async def getUsers():
+    conn = await getConexion()
     try:
-        conn = await getConexion()
+        
         usuarios=[]
         async with conn.cursor() as cur:
             await cur.execute("SELECT * FROM usuario")
@@ -38,8 +39,9 @@ async def getUsers():
 
 @user_router.get("getUsersByUserName/{username}")
 async def getUsersByUserName(username:str):
+    conn = await getConexion()
     try:
-        conn = await getConexion()
+        
         usuarios=[]
         async with conn.cursor() as cur:
             await cur.execute("Select * from usuario where nombre_usuario='{0}'".format(username))
@@ -56,8 +58,9 @@ async def getUsersByUserName(username:str):
 
 @user_router.get("getUsersWithRol")
 async def getUsersWithRol():
+    conn = await getConexion()
     try:
-        conn = await getConexion()
+        
         usuarios=[]
         async with conn.cursor() as cur:
             await cur.execute("Select * from usuario INNER JOIN rol ON usuario.rol_usuario = rol.id_rol")
@@ -73,8 +76,9 @@ async def getUsersWithRol():
 
 @user_router.get("usuarios/getRol")
 async def getRol():
+    conn = await getConexion()
     try:
-        conn = await getConexion()
+        
         roles=[]
         async with conn.cursor() as cur:
             await cur.execute("Select * from rol")
@@ -91,8 +95,9 @@ async def getRol():
 
 @user_router.get("getUsersById/{id}")
 async def getUsersById(id:int):
+    conn = await getConexion()
     try:
-        conn = await getConexion()
+        
         usuarios=[]
         async with conn.cursor() as cur:
             await cur.execute("Select * from usuario INNER JOIN rol ON usuario.rol_usuario = rol.id_rol where id_usuario={0}".format(id))
@@ -109,8 +114,9 @@ async def getUsersById(id:int):
 
 @user_router.get("getUsersCompleteData/{id}")
 async def getUsersCompleteData(id:int):
+    conn = await getConexion()
     try:
-        conn = await getConexion()
+
         usuarios=[]
         async with conn.cursor() as cur:
             await cur.execute("Select * from usuario INNER JOIN rol ON usuario.rol_usuario = rol.id_rol where id_usuario={0}".format(id))
@@ -141,10 +147,10 @@ async def getUsersCompleteData(id:int):
 
 @user_router.post("verifyUserByUser")
 async def getUsersById(request: Request, user: usuarioCreate = Body(...)):
+    conn = await getConexion()
     try:
         #obtener username por medio del body del api
         username = user.nombre_usuario
-        conn = await getConexion()
         resultado={}
         async with conn.cursor() as cur:
             await cur.execute("Select * from usuario where nombre_usuario='{0}' ".format(username))
@@ -162,11 +168,12 @@ async def getUsersById(request: Request, user: usuarioCreate = Body(...)):
 
 @user_router.post("verifyUserByUserAndPassword")
 async def getUsersById(request: Request, user: usuarioVerify = Body(...)):
+    conn = await getConexion()
     try:
         #obtener username por medio del body del api
         username = user.nombre_usuario
         password = user.contrasena_usuario
-        conn = await getConexion()
+        
         resultado={}
         async with conn.cursor() as cur:
             await cur.execute("Select * from usuario where nombre_usuario='{0}' and contrasena_usuario='{1}'".format(username,password))
