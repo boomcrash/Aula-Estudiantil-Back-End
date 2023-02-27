@@ -4,6 +4,9 @@ from controladores.usuario.usuarioController import user_router
 from controladores.home.homeController import home_router
 from controladores.docenteController import teacher_router
 from controladores.estudianteController import student_router
+from controladores.moduloController import modulo_router
+from controladores.paraleloController import paralelo_router
+from controladores.medioController import medio_router
 
 #libreria que se importa de configuracion.py (contiene las configuraciones del server)
 from configuracion import configuracion
@@ -31,6 +34,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+
+app.include_router(
+    medio_router,
+    prefix='/api/v1/medios',
+    tags=['Medios'],
+    responses={404: {'description': 'Not found'}}
+)
+
+app.include_router(
+    paralelo_router,
+    prefix='/api/v1/paralelos',
+    tags=['Paralelos'],
+    responses={404: {'description': 'Not found'}}
+)
+
+app.include_router(
+    modulo_router,
+    prefix='/api/v1/modulos',
+    tags=['Modulos'],
+    responses={404: {'description': 'Not found'}}
+)
+
+###
 app.include_router(
     student_router,
     prefix='/api/v1/estudiantes',
