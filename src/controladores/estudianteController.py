@@ -26,8 +26,8 @@ async def getStudents():
         usuarios=[]
         async with conn.cursor() as cur:
             await cur.execute("SELECT * FROM Estudiante")
-            result = await cur.fetchall()
-            for data in result:
+            resultado = await cur.fetchall()
+            for result in resultado:
                 usuario = {'usuario_estudiante': result['usuario_estudiante'],'nombres_estudiante': result['nombres_estudiante'],'apellidos_estudiante': result['apellidos_estudiante'],'cedula_estudiante': result['cedula_estudiante'],'fechaNacimiento_estudiante': result['fechaNacimiento_estudiante'],'edad_estudiante': result['edad_estudiante'],'direccion_estudiante': result['direccion_estudiante'],'telefono_estudiante': result['telefono_estudiante'],'email_estudiante': result['email_estudiante'],'nivelEducacion_estudiante': result['nivelEducacion_estudiante'],'promedioAnterior_estudiante': result['promedioAnterior_estudiante'],'medio_estudiante': result['medio_estudiante'],'estado_estudiante': result['estado_estudiante']}
                 usuarios.append(usuario)
         return {'data': usuarios, 'accion': "true"}

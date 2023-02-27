@@ -26,8 +26,8 @@ async def getTeachers():
         usuarios=[]
         async with conn.cursor() as cur:
             await cur.execute("SELECT * FROM Docente")
-            result = await cur.fetchall()
-            for data in result:
+            resultado = await cur.fetchall()
+            for result in resultado:
                 usuario = {'usuario_docente': result['usuario_docente'],'nombres_docente': result['nombres_docente'],'apellidos_docente': result['apellidos_docente'],'cedula_docente': result['cedula_docente'],'fechaNacimiento_docente': result['fechaNacimiento_docente'],'edad_docente': result['edad_docente'],'direccion_docente': result['direccion_docente'],'telefono_docente': result['telefono_docente'],'email_docente': result['email_docente'],'titulo_docente': result['titulo_docente'],'nivelEducacion_docente': result['nivelEducacion_docente'],'estado_docente': result['estado_docente']}
                 usuarios.append(usuario)
         return {'data': usuarios, 'accion': "true"}
