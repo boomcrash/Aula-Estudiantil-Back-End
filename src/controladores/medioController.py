@@ -28,7 +28,7 @@ async def getMedios():
             await cur.execute("SELECT * FROM Medio")
             resultado = await cur.fetchall()
             for result in resultado:
-                usuario = {'id_paralelo': result['id_paralelo'],'nombre_paralelo': result['nombre_paralelo']}
+                usuario = {'id_medio': result['id_medio'],'nombre_medio': result['nombre_medio']}
                 usuarios.append(usuario)
         return {'data': usuarios, 'accion': "true"}
     except Exception as e:
