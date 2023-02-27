@@ -2,6 +2,8 @@
 #importando controladores
 from controladores.usuario.usuarioController import user_router
 from controladores.home.homeController import home_router
+from controladores.docenteController import teacher_router
+from controladores.estudianteController import student_router
 
 #libreria que se importa de configuracion.py (contiene las configuraciones del server)
 from configuracion import configuracion
@@ -27,6 +29,20 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+
+app.include_router(
+    student_router,
+    prefix='/api/v1/estudiantes',
+    tags=['Estudiantes'],
+    responses={404: {'description': 'Not found'}}
+)
+
+app.include_router(
+    teacher_router,
+    prefix='/api/v1/docentes',
+    tags=['Docentes'],
+    responses={404: {'description': 'Not found'}}
 )
 
 app.include_router(
