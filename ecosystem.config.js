@@ -7,7 +7,12 @@ module.exports = {
       env: {
         NODE_ENV: 'production'
       },
+      
+    }],
+    deploy: {
+      production: {
       // Configuración de Git
       "post-deploy": "git pull origin main && pip install -r requirements.txt && pm2 reload ecosystem.config.js --env production"
-    }]
+      }
+    }
   };
