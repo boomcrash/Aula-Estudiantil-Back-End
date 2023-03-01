@@ -12,7 +12,7 @@ module.exports = {
     deploy: {
       production: {
       user: 'root',
-      host: '127.0.0.1',
+      host: '167.71.26.121',
       ref: 'origin/main',
       repo: 'https://github.com/boomcrash/Aula-Estudiantil-Back-End.git',
       path: '/home/aula-backend',
