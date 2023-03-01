@@ -12,6 +12,7 @@ from fastapi.param_functions import Body
 from clases.usuarioClass import usuarioClass
 from clases.usuarioClass import usuarioCreate
 from clases.usuarioClass import usuarioVerify
+from clases.usuarioClass import addUser
 
 user_router = APIRouter()
 
@@ -183,6 +184,33 @@ async def getUsersById(request: Request, user: usuarioVerify = Body(...)):
             else:
                 resultado={'existe':False}
         return {'data': resultado, 'accion': "true"}
+    except Exception as e:
+        return {'data': '', 'accion': "false"}
+    finally:
+        conn.close()
+
+
+
+@user_router.post("/addUser")
+async def addUser(request: Request, user: addUser = Body(...)):
+    conn = await getConexion()
+    try:
+        #obtener username por medio del body del api
+        username = user.nombre_usuario
+        password = user.contrasena_usuario
+        rol = user.rol_usuario
+       
+        global insertado
+        insertado=False
+        #insertar el usuario
+        async with conn.cursor() as cur:
+            await cur.execute("INSERT INTO Usuario(nombre_usuario, contrasena_usuario, rol_usuario) VALUES ('{0}','{1}','{2}')".format(username,password,rol))
+            await conn.commit()
+            #obtener true si se inserto correctamente
+            if cur.rowcount > 0:
+                insertado=True
+        
+        return {'data': {'insertado':insertado}, 'accion': "true"}
     except Exception as e:
         return {'data': '', 'accion': "false"}
     finally:

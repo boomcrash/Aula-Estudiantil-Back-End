@@ -8,7 +8,7 @@ class DevelopmentConfig():
     HOST="0.0.0.0"
     MYSQL_HOST="167.71.26.121"
     MYSQL_USER = "root"
-    MYSQL_PASSWORD = os.environ['MYSQL_ROOT_PASSWORD']
+    MYSQL_PASSWORD = 'Camaleon_12' #os.environ['MYSQL_ROOT_PASSWORD']
     MYSQL_DB = "CENTROARTESANAL"
 
 configuracion={

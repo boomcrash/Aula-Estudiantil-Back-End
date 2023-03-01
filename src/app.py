@@ -7,6 +7,7 @@ from controladores.estudianteController import student_router
 from controladores.moduloController import modulo_router
 from controladores.paraleloController import paralelo_router
 from controladores.medioController import medio_router
+from controladores.rolController import rol_router
 
 #libreria que se importa de configuracion.py (contiene las configuraciones del server)
 from configuracion import configuracion
@@ -34,27 +35,32 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+app.include_router(
+    rol_router,
+    prefix='/api/v1/roles',
+    tags=['Roles'],
+    responses={404: {'description': 'Error de acceso a la ventana de roles'}},
+)
 
 app.include_router(
     medio_router,
     prefix='/api/v1/medios',
     tags=['Medios'],
-    responses={404: {'description': 'Not found'}}
+    responses={404: {'description': 'Error de acceso a la ventana de medios'}}
 )
 
 app.include_router(
     paralelo_router,
     prefix='/api/v1/paralelos',
     tags=['Paralelos'],
-    responses={404: {'description': 'Not found'}}
+    responses={404: {'description': 'Error de acceso a la ventana de paralelos'}}
 )
 
 app.include_router(
     modulo_router,
     prefix='/api/v1/modulos',
     tags=['Modulos'],
-    responses={404: {'description': 'Not found'}}
+    responses={404: {'description': 'Error de acceso a la ventana de modulos'}}
 )
 
 ###
@@ -62,28 +68,28 @@ app.include_router(
     student_router,
     prefix='/api/v1/estudiantes',
     tags=['Estudiantes'],
-    responses={404: {'description': 'Not found'}}
+    responses={404: {'description': 'Error de acceso a la ventana de estudiantes'}}
 )
 
 app.include_router(
     teacher_router,
     prefix='/api/v1/docentes',
     tags=['Docentes'],
-    responses={404: {'description': 'Not found'}}
+    responses={404: {'description': 'Error de acceso a la ventana de docentes'}}
 )
 
 app.include_router(
     user_router,
     prefix='/api/v1/usuarios',
     tags=['Usuarios'],
-    responses={404: {'description': 'Not found'}}
+    responses={404: {'description': 'Error de acceso a la ventana de usuarios'}}
 )
 
 app.include_router(
     home_router,
     prefix='/home',
     tags=['Inicio'],
-    responses={404: {'description': 'Not found'}}
+    responses={404: {'description': 'Error de acceso a la ventana en home'}}
 )
 
 #app.include_router(user_router, prefix="/api/v1")

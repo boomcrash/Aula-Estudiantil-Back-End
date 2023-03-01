@@ -35,3 +35,66 @@ async def getStudents():
         return {'data': '', 'accion': "false"}
     finally:
         conn.close()
+
+
+@student_router.post("/addUserAndStudents")
+async def addUserAndStudents(request: Request, estudiante: estudianteClass = Body(...)):
+    conn = await getConexion()
+    try:
+        username = estudiante.nombre_usuario
+        password = estudiante.contrasena_usuario
+        rol = estudiante.rol_usuario
+        nombres=estudiante.nombres_estudiante
+        apellidos=estudiante.apellidos_estudiante
+        cedula=estudiante.cedula_estudiante
+        fechaNacimiento=estudiante.fechaNacimiento_estudiante
+        edad=estudiante.edad_estudiante
+        direccion=estudiante.direccion_estudiante
+        telefono=estudiante.telefono_estudiante
+        email=estudiante.email_estudiante
+        nivelEducacion=estudiante.nivelEducacion_estudiante
+        promedioAnterior=estudiante.promedioAnterior_estudiante
+        medio=estudiante.medio_estudiante
+        
+        #variable para saber si se inserto el usuario
+        global usuarioInsertado
+        usuarioInsertado=False
+        #insertar el usuario
+        async with conn.cursor() as cur:
+            await cur.execute("INSERT INTO Usuario(nombre_usuario, contrasena_usuario, rol_usuario) VALUES ('{0}','{1}','{2}')".format(username,password,rol))
+            await conn.commit()
+            #obtener true si se inserto correctamente
+            if cur.rowcount > 0:
+                usuarioInsertado=True
+            else :
+                usuarioInsertado=False
+        
+        global id_usuario
+        if usuarioInsertado:
+            id_usuario=0
+            #obtener el id del usuario insertado
+            async with conn.cursor() as cur:
+                await cur.execute("Select id_usuario from Usuario where nombre_usuario='{0}' and contrasena_usuario='{1}'".format(username,password))
+                result = await cur.fetchone()
+                id_usuario=result['id_usuario']   
+
+        #insertar el docente
+        global estudianteInsertado
+        if usuarioInsertado ==True and id_usuario > 0:
+            estudianteInsertado=False
+            async with conn.cursor() as cur:
+                await cur.execute ("INSERT INTO Estudiante(usuario_estudiante, nombres_estudiante, apellidos_estudiante, cedula_estudiante, fechaNacimiento_estudiante, edad_estudiante, direccion_estudiante, telefono_estudiante, email_estudiante, nivelEducacion_estudiante, promedioAnterior_estudiante, medio_estudiante) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}')".format(id_usuario,nombres,apellidos,cedula,fechaNacimiento,edad,direccion,telefono,email,nivelEducacion,promedioAnterior,medio))
+                await conn.commit()
+                #obtener true si se inserto correctamente
+                if cur.rowcount > 0:
+                    estudianteInsertado=True
+                else:
+                    estudianteInsertado=False
+        if usuarioInsertado and estudianteInsertado:
+            return {'data': [{'usuario':usuarioInsertado,'docente':estudianteInsertado}], 'accion': "true"}
+        else:
+            return {'data': [{'usuario':usuarioInsertado,'docente':estudianteInsertado}], 'accion': "false"}
+    except Exception as e:
+        return {'data': '', 'accion': "false"}
+    finally:
+        conn.close()

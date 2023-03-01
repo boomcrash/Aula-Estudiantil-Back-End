@@ -13,3 +13,8 @@ class usuarioCreate(BaseModel):
 class usuarioVerify(BaseModel):
     nombre_usuario: str
     contrasena_usuario: str
+
+class addUser(BaseModel):
+    nombre_usuario: str
+    contrasena_usuario: str
+    rol_usuario: int = None
