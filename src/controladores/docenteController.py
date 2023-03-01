@@ -109,7 +109,7 @@ async def addUserAndTeachers(request: Request, docente: addUserAndDocente = Body
 @teacher_router.post("/addTeachersByUserId")
 async def addTeachersByUserId(request: Request, docente: addDocenteByUserId = Body(...)):
     conn = await getConexion()
-    try:
+    try: 
         #obtener username por medio del body del api
         id_usuario = docente.usuario_docente
         nombres = docente.nombres_docente
