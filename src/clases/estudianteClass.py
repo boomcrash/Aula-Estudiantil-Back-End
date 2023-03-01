@@ -32,3 +32,17 @@ class addUserAndStudent(BaseModel):
     nivelEducacion_estudiante: str = None
     promedioAnterior_estudiante: float = None
     medio_estudiante: int = None
+
+class addEstudianteByUserId(BaseModel):
+    usuario_estudiante: int = None
+    nombres_estudiante: str = None
+    apellidos_estudiante: str = None
+    cedula_estudiante: str = None
+    fechaNacimiento_estudiante: datetime.date = None
+    edad_estudiante: int = None
+    direccion_estudiante: str = None
+    telefono_estudiante: str = None
+    email_estudiante: str = None
+    nivelEducacion_estudiante: str = None
+    promedioAnterior_estudiante: float = None
+    medio_estudiante: int = None
