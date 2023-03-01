@@ -12,5 +12,10 @@ def webhook():
             subprocess.call(['pm2', 'restart', 'aula-backend'])
     return 'OK'
 
+#rertornar hola
+@app.route('/hola', methods=['GET'])
+def hola():
+    return 'Hola'
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
