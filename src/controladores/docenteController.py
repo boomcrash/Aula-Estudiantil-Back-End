@@ -11,6 +11,7 @@ from fastapi.param_functions import Body
 #importacion de clases de usuario
 from clases.docenteClass import docenteClass
 from clases.docenteClass import addUserAndDocente
+from clases.docenteClass import addDocenteByUserId
 
 
 teacher_router = APIRouter()
@@ -100,5 +101,45 @@ async def addUserAndTeachers(request: Request, docente: addUserAndDocente = Body
             return {'data': [{'usuario':usuarioInsertado,'docente':docenteInsertado}], 'accion': "false"}
     except Exception as e:
         return {'data': '', 'accion': "false"}
+    finally:
+        conn.close()
+
+
+
+@teacher_router.post("/addTeachersByUserId")
+async def addTeachersByUserId(request: Request, docente: addDocenteByUserId = Body(...)):
+    conn = await getConexion()
+    try:
+        #obtener username por medio del body del api
+        id_usuario = docente.usuario_docente
+        nombres = docente.nombres_docente
+        apellidos = docente.apellidos_docente
+        cedula = docente.cedula_docente
+        fechaNacimiento = docente.fechaNacimiento_docente
+        edad = docente.edad_docente
+        direccion = docente.direccion_docente
+        telefono = docente.telefono_docente
+        email = docente.email_docente
+        titulo = docente.titulo_docente
+        nivelEducacion = docente.nivelEducacion_docente
+        promedio = docente.promedio_docente
+        
+        #insertar el docente
+        global docenteInsertado
+        docenteInsertado=False
+        async with conn.cursor() as cur:
+            await cur.execute("INSERT INTO Docente(usuario_docente, nombres_docente, apellidos_docente, cedula_docente, fechaNacimiento_docente, edad_docente, direccion_docente, telefono_docente, email_docente, titulo_docente, nivelEducacion_docente,promedio_docente) VALUES ({0},'{1}','{2}','{3}','{4}',{5},'{6}','{7}','{8}','{9}','{10}','{11}')".format(id_usuario,nombres,apellidos,cedula,fechaNacimiento,edad,direccion,telefono,email,titulo,nivelEducacion,promedio))
+            await conn.commit()
+            #obtener true si se inserto correctamente
+            if cur.rowcount > 0:
+                docenteInsertado=True
+            else:
+                docenteInsertado=False
+        if docenteInsertado:
+            return {'data': [{'docente':docenteInsertado}], 'accion': "true"}
+        else:
+            return {'data': [{'docente':docenteInsertado}], 'accion': "false"}
+    except:
+        pass
     finally:
         conn.close()
