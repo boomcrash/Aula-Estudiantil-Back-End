@@ -15,6 +15,7 @@ from controladores.asistenciaController import asistencia_router
 from controladores.contratoController import contrato_router
 from controladores.evaluacionController import evaluacion_router
 from controladores.itemActaController import itemActa_router
+from controladores.itemMatriculaController import itemMatricula_router
 #libreria que se importa de configuracion.py (contiene las configuraciones del server)
 from configuracion import configuracion
 #inicializar flask con fastApi
@@ -42,6 +43,14 @@ app.add_middleware(
 )
 
 
+
+#itemMatricula_router
+app.include_router(
+    itemMatricula_router,
+    prefix='/api/v1/itemMatriculas',
+    tags=['ItemMatriculas'],
+    responses={404: {'description': 'Error de acceso a la ventana de itemMatriculas'}},
+)
 
 #itemActa_router
 app.include_router(
