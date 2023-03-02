@@ -10,6 +10,7 @@ from controladores.medioController import medio_router
 from controladores.rolController import rol_router
 from controladores.cursoController import course_router
 from controladores.actaController import acta_router
+from controladores.horarioController import horario_router
 #libreria que se importa de configuracion.py (contiene las configuraciones del server)
 from configuracion import configuracion
 #inicializar flask con fastApi
@@ -36,7 +37,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-acta_router
+
+app.include_router(
+    horario_router,
+    prefix='/api/v1/horarios',
+    tags=['Horarios'],
+    responses={404: {'description': 'Error de acceso a la ventana de horarios'}},
+)
+
 
 app.include_router(
     acta_router,

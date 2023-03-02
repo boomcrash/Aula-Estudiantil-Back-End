@@ -12,3 +12,6 @@ class horarioClass(BaseModel):
 
 class getHorarioPersonalizado(BaseModel):
     pass
+
+class getHorarioDocente(BaseModel):
+    docente_curso: int = None
