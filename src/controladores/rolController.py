@@ -49,8 +49,8 @@ async def getRolName(id_rol:str):
             if resultado != None:
                 usuario = {'nombre_rol': resultado['nombre_rol']}
                 usuarios.append(usuario)
-        return {'data': usuarios, 'accion': "true"}
+        return {'data': usuarios, 'accion': True}
     except Exception as e:
-        return {'data': '', 'accion': "false"}
+        return {'data': '', 'accion': False}
     finally:
         conn.close()

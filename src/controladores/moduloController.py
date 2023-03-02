@@ -30,8 +30,8 @@ async def getModulos():
             for result in resultado:
                 usuario = {'id_modulo': result['id_modulo'],'nombre_modulo': result['nombre_modulo'],'precio_modulo': result['precio_modulo']}
                 usuarios.append(usuario)
-        return {'data': usuarios, 'accion': "true"}
+        return {'data': usuarios, 'accion': True}
     except Exception as e:
-        return {'data': '', 'accion': "false"}
+        return {'data': '', 'accion': False}
     finally:
         conn.close()

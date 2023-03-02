@@ -33,9 +33,9 @@ async def getTeachers():
             for result in resultado:
                 usuario = {'usuario_docente': result['usuario_docente'],'nombres_docente': result['nombres_docente'],'apellidos_docente': result['apellidos_docente'],'cedula_docente': result['cedula_docente'],'fechaNacimiento_docente': result['fechaNacimiento_docente'],'edad_docente': result['edad_docente'],'direccion_docente': result['direccion_docente'],'telefono_docente': result['telefono_docente'],'email_docente': result['email_docente'],'titulo_docente': result['titulo_docente'],'nivelEducacion_docente': result['nivelEducacion_docente'],'estado_docente': result['estado_docente']}
                 usuarios.append(usuario)
-        return {'data': usuarios, 'accion': "true"}
+        return {'data': usuarios, 'accion': True}
     except Exception as e:
-        return {'data': '', 'accion': "false"}
+        return {'data': '', 'accion': False}
     finally:
         conn.close()
 
@@ -96,11 +96,11 @@ async def addUserAndTeachers(request: Request, docente: addUserAndDocente = Body
                 else:
                     docenteInsertado=False
         if usuarioInsertado and docenteInsertado:
-            return {'data': [{'usuario':usuarioInsertado,'docente':docenteInsertado}], 'accion': "true"}
+            return {'data': [{'usuario':usuarioInsertado,'docente':docenteInsertado}], 'accion':True}
         else:
-            return {'data': [{'usuario':usuarioInsertado,'docente':docenteInsertado}], 'accion': "false"}
+            return {'data': [{'usuario':usuarioInsertado,'docente':docenteInsertado}], 'accion': False}
     except Exception as e:
-        return {'data': '', 'accion': "false"}
+        return {'data': '', 'accion': False}
     finally:
         conn.close()
 
@@ -136,9 +136,9 @@ async def addTeachersByUserId(request: Request, docente: addDocenteByUserId = Bo
             else:
                 docenteInsertado=False
         if docenteInsertado:
-            return {'data': [{'docente':docenteInsertado}], 'accion': "true"}
+            return {'data': [{'docente':docenteInsertado}], 'accion': True}
         else:
-            return {'data': [{'docente':docenteInsertado}], 'accion': "false"}
+            return {'data': [{'docente':docenteInsertado}], 'accion': False}
     except:
         pass
     finally:

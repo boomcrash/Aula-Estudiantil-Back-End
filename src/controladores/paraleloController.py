@@ -30,8 +30,8 @@ async def getParalelos():
             for result in resultado:
                 usuario = {'id_paralelo': result['id_paralelo'],'nombre_paralelo': result['nombre_paralelo']}
                 usuarios.append(usuario)
-        return {'data': usuarios, 'accion': "true"}
+        return {'data': usuarios, 'accion': True}
     except Exception as e:
-        return {'data': '', 'accion': "false"}
+        return {'data': '', 'accion': False}
     finally:
         conn.close()
