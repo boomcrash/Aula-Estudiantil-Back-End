@@ -11,7 +11,7 @@ from fastapi.param_functions import Body
 #importacion de clases de usuario
 from clases.contratoClass import getContratosDocenteId
 
-asistencia_router = APIRouter()
+contrato_router = APIRouter()
 
 async def getConexion():
     conn = await aiomysql.connect(host=configuracion['development'].MYSQL_HOST, user=configuracion['development'].MYSQL_USER, password=configuracion['development'].MYSQL_PASSWORD, db=configuracion['development'].MYSQL_DB, charset='utf8', cursorclass=aiomysql.DictCursor)
@@ -19,7 +19,7 @@ async def getConexion():
 
 
 #metodo get para obtener todos los contratos
-@asistencia_router.get("/getContratos")
+@contrato_router.get("/getContratos")
 async def getContratos():
     conn = await getConexion()
     try:
@@ -38,7 +38,7 @@ async def getContratos():
         conn.close()
 
 #metodo post para obtener contratos mediante docente_contrato
-@asistencia_router.post("/getContratosByIdDocente")
+@contrato_router.post("/getContratosByIdDocente")
 async def getContratosByIdDocente(request: Request, contrato: getContratosDocenteId = Body(...)):
     conn = await getConexion()
     try:
