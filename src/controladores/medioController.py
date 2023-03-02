@@ -30,8 +30,8 @@ async def getMedios():
             for result in resultado:
                 usuario = {'id_medio': result['id_medio'],'nombre_medio': result['nombre_medio']}
                 usuarios.append(usuario)
-        return {'data': usuarios, 'accion': "true"}
+        return {'data': usuarios, 'accion': True}
     except Exception as e:
-        return {'data': '', 'accion': "false"}
+        return {'data': '', 'accion': False}
     finally:
         conn.close()

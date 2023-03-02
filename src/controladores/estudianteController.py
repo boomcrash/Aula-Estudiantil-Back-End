@@ -32,9 +32,9 @@ async def getStudents():
             for result in resultado:
                 usuario = {'usuario_estudiante': result['usuario_estudiante'],'nombres_estudiante': result['nombres_estudiante'],'apellidos_estudiante': result['apellidos_estudiante'],'cedula_estudiante': result['cedula_estudiante'],'fechaNacimiento_estudiante': result['fechaNacimiento_estudiante'],'edad_estudiante': result['edad_estudiante'],'direccion_estudiante': result['direccion_estudiante'],'telefono_estudiante': result['telefono_estudiante'],'email_estudiante': result['email_estudiante'],'nivelEducacion_estudiante': result['nivelEducacion_estudiante'],'promedioAnterior_estudiante': result['promedioAnterior_estudiante'],'medio_estudiante': result['medio_estudiante'],'estado_estudiante': result['estado_estudiante']}
                 usuarios.append(usuario)
-        return {'data': usuarios, 'accion': "true"}
+        return {'data': usuarios, 'accion': True}
     except Exception as e:
-        return {'data': '', 'accion': "false"}
+        return {'data': '', 'accion': False}
     finally:
         conn.close()
 
@@ -93,11 +93,11 @@ async def addUserAndStudents(request: Request, estudiante: addUserAndStudent = B
                 else:
                     estudianteInsertado=False
         if usuarioInsertado and estudianteInsertado:
-            return {'data': [{'usuario':usuarioInsertado,'estudiante':estudianteInsertado}], 'accion': "true"}
+            return {'data': [{'usuario':usuarioInsertado,'estudiante':estudianteInsertado}], 'accion':True}
         else:
-            return {'data': [{'usuario':usuarioInsertado,'estudiante':estudianteInsertado}], 'accion': "false"}
+            return {'data': [{'usuario':usuarioInsertado,'estudiante':estudianteInsertado}], 'accion': False}
     except Exception as e:
-        return {'data': '', 'accion': "false"}
+        return {'data': '', 'accion': False}
     finally:
         conn.close()
 
@@ -132,9 +132,9 @@ async def addEstudianteByUserId(request: Request, estudiante: addEstudianteByUse
             else:
                 estudianteInsertado=False
         if estudianteInsertado:
-            return {'data': [{'estudiante':estudianteInsertado}], 'accion': "true"}
+            return {'data': [{'estudiante':estudianteInsertado}], 'accion': True}
         else:
-            return {'data': [{'estudiante':estudianteInsertado}], 'accion': "false"}
+            return {'data': [{'estudiante':estudianteInsertado}], 'accion': True}
     except Exception as e:
         return {'data': '', 'accion': "false"}
     finally:

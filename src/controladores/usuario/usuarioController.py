@@ -32,9 +32,9 @@ async def getUsers():
             for data in result:
                 usuario = {'id_usuario': data['id_usuario'], 'nombre_usuario': data['nombre_usuario'], 'contrasena_usuario': data['contrasena_usuario'], 'rol_usuario': data['rol_usuario']}
                 usuarios.append(usuario)
-        return {'data': usuarios, 'accion': "true"}
+        return {'data': usuarios, 'accion':True}
     except Exception as e:
-        return {'data': '', 'accion': "false"}
+        return {'data': '', 'accion': False}
     finally:
         conn.close()
 
@@ -50,9 +50,9 @@ async def getUsersByUserName(username:str):
             for data in result:
                 usuario = {'id_usuario': data['id_usuario'], 'nombre_usuario': data['nombre_usuario'], 'contrasena_usuario': data['contrasena_usuario'], 'rol_usuario': data['rol_usuario']}
                 usuarios.append(usuario)
-        return {'data': usuarios, 'accion': "true"}
+        return {'data': usuarios, 'accion': True}
     except Exception as e:
-        return {'data': '', 'accion': "false"}
+        return {'data': '', 'accion': False}
     finally:
         conn.close()
 
@@ -69,9 +69,9 @@ async def getUsersWithRol():
             for data in result:
                 usuario = {'id_usuario': data['id_usuario'], 'nombre_usuario': data['nombre_usuario'], 'contrasena_usuario': data['contrasena_usuario'], 'rol_usuario': data['rol_usuario'],'nombre_rol': data['nombre_rol']}
                 usuarios.append(usuario)
-        return {'data': usuarios, 'accion': "true"}
+        return {'data': usuarios, 'accion': True}
     except Exception as e:
-        return {'data': '', 'accion': "false"}
+        return {'data': '', 'accion': False}
     finally:
         conn.close()
 
@@ -87,9 +87,9 @@ async def getRol():
             for data in result:
                 usuario = {'id_rol': data['id_rol'],'nombre_rol': data['nombre_rol']}
                 roles.append(usuario)
-        return {'data': roles, 'accion': "true"}
+        return {'data': roles, 'accion': True}
     except Exception as e:
-        return {'data': '', 'accion': "false"}
+        return {'data': '', 'accion': False}
     finally:
         conn.close()
 
@@ -106,9 +106,9 @@ async def getUsersById(id:int):
             for datos in result:
                 usuario = {'id_usuario': datos['id_usuario'], 'nombre_usuario': datos['nombre_usuario'], 'contrasena_usuario': datos['contrasena_usuario'], 'rol_usuario': datos['rol_usuario'],'nombre_rol': datos['nombre_rol']}
                 usuarios.append(usuario)
-        return {'data': usuarios, 'accion': "true"}
+        return {'data': usuarios, 'accion': True}
     except Exception as e:
-        return {'data': '', 'accion': "false"}
+        return {'data': '', 'accion': False}
     finally:
         conn.close()
 
@@ -139,9 +139,9 @@ async def getUsersCompleteData(id:int):
                     usuario = {'id_usuario': result['id_usuario'], 'nombre_usuario': result['nombre_usuario'], 'contrasena_usuario': result['contrasena_usuario'], 'rol_usuario': result['rol_usuario'],'usuario_estudiante': result['usuario_estudiante'],'nombres_estudiante': result['nombres_estudiante'],'apellidos_estudiante': result['apellidos_estudiante'],'cedula_estudiante': result['cedula_estudiante'],'fechaNacimiento_estudiante': result['fechaNacimiento_estudiante'],'edad_estudiante': result['edad_estudiante'],'direccion_estudiante': result['direccion_estudiante'],'telefono_estudiante': result['telefono_estudiante'],'email_estudiante': result['email_estudiante'],'nivelEducacion_estudiante': result['nivelEducacion_estudiante'],'promedioAnterior_estudiante': result['promedioAnterior_estudiante'],'medio_estudiante': result['medio_estudiante'],'estado_estudiante': result['estado_estudiante']}
                     usuarios.append(usuario)
 
-        return {'data': usuarios, 'accion': "true"}
+        return {'data': usuarios, 'accion': True}
     except Exception as e:
-        return {'data': '', 'accion': "false"}
+        return {'data': '', 'accion': False}
     finally:
         conn.close()
 
@@ -160,9 +160,9 @@ async def getUsersById(request: Request, user: usuarioCreate = Body(...)):
                 resultado={'existe':True}
             else:
                 resultado={'existe':False}
-        return {'data': resultado, 'accion': "true"}
+        return {'data': resultado, 'accion': True}
     except Exception as e:
-        return {'data': '', 'accion': "false"}
+        return {'data': '', 'accion': False}
     finally:
         conn.close()
 
@@ -183,9 +183,9 @@ async def getUsersById(request: Request, user: usuarioVerify = Body(...)):
                 resultado={'existe':True}
             else:
                 resultado={'existe':False}
-        return {'data': resultado, 'accion': "true"}
+        return {'data': resultado, 'accion': True}
     except Exception as e:
-        return {'data': '', 'accion': "false"}
+        return {'data': '', 'accion': False}
     finally:
         conn.close()
 
@@ -210,8 +210,8 @@ async def addUser(request: Request, user: addUser = Body(...)):
             if cur.rowcount > 0:
                 insertado=True
         
-        return {'data': {'insertado':insertado}, 'accion': "true"}
+        return {'data': {'insertado':insertado}, 'accion': True}
     except Exception as e:
-        return {'data': '', 'accion': "false"}
+        return {'data': '', 'accion': False}
     finally:
         conn.close()
