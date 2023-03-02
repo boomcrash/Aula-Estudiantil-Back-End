@@ -18,6 +18,25 @@ async def getConexion():
     conn = await aiomysql.connect(host=configuracion['development'].MYSQL_HOST, user=configuracion['development'].MYSQL_USER, password=configuracion['development'].MYSQL_PASSWORD, db=configuracion['development'].MYSQL_DB, charset='utf8', cursorclass=aiomysql.DictCursor)
     return conn
 
+#getAllHorarios
+@horario_router.get("/getAllHorarios")
+async def getAllHorarios():
+    conn = await getConexion()
+    try:
+        
+        horarios=[]
+        async with conn.cursor() as cur:
+            await cur.execute("SELECT * FROM Horario")
+            resultado = await cur.fetchall()
+            for result in resultado:
+                horario = {'id_horario': result['id_horario'],'curso_horario': result['curso_horario'],'dia_horario': result['dia_horario'],'horaInicio_horario': result['horaInicio_horario'],'horaFin_horario': result['horaFin_horario']}
+                horarios.append(horario)
+        return {'data': horarios, 'accion': True}
+    except Exception as e:
+        return {'data': '', 'accion': False}
+    finally:
+        conn.close()
+
 #post getHorarioDocente de este sql: Select id_curso, nombre_materia, modulo_materia, nombre_paralelo, 
 #		dia_horario, 
 #        concat(horaInicio_horario, ' - ',horaFin_horario) as hora_horario
