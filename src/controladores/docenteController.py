@@ -99,8 +99,8 @@ async def addUserAndTeachers(request: Request, docente: addUserAndDocente = Body
             return {'data': [{'usuario':usuarioInsertado,'docente':docenteInsertado}], 'accion':True}
         else:
             return {'data': [{'usuario':usuarioInsertado,'docente':docenteInsertado}], 'accion': False}
-    except Exception as e:
-        return {'data': '', 'accion': False}
+    except Exception as error:
+        return {'data': error, 'accion': False}
     finally:
         conn.close()
 
