@@ -46,3 +46,12 @@ class addDocenteByUserId(BaseModel):
     titulo_docente: str = None
     nivelEducacion_docente: str = None
     promedio_docente: float = None
+
+
+class addPagoDocente(BaseModel):
+    id_pagoDocente: int = None
+    docente_pagoDocente: int = None
+    fecha_pagoDocente: datetime.date = None
+    faltas_pagoDocente: int = None
+    descuento_pagoDocente: float = None
+    total_pagoDocente: float = None

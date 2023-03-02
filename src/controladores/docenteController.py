@@ -12,6 +12,7 @@ from fastapi.param_functions import Body
 from clases.docenteClass import docenteClass
 from clases.docenteClass import addUserAndDocente
 from clases.docenteClass import addDocenteByUserId
+from clases.docenteClass import addPagoDocente
 
 
 teacher_router = APIRouter()
@@ -141,5 +142,56 @@ async def addTeachersByUserId(request: Request, docente: addDocenteByUserId = Bo
             return {'data': [{'docente':docenteInsertado}], 'accion': False}
     except:
         pass
+    finally:
+        conn.close()
+
+
+
+#pagoDocente
+@teacher_router.get("/getPaymentTeacher")
+async def getPaymentTeacher(request: Request):
+    conn = await getConexion()
+    try:
+        pagoDocente = []
+        async with conn.cursor() as cur:
+            await cur.execute("SELECT * FROM PagoDocente")
+            result = await cur.fetchall()
+            for pago in result:
+                pagoDocente.append(pago)
+        return {'data': pagoDocente, 'accion': True}
+    except Exception as e:
+        return {'data': '', 'accion': False}
+    finally:
+        conn.close()
+
+
+#insertar pago docente
+@teacher_router.post("/addPaymentTeacher")
+async def addPaymentTeacher(request: Request, pago: addPagoDocente = Body(...)):
+    conn = await getConexion()
+    try:
+        #obtener datos por medio del body del api
+        idDocente= pago.docente_pagoDocente
+        fecha = pago.fecha_pagoDocente
+        faltas = pago.faltas_pagoDocente
+        descuento = pago.descuento_pagoDocente
+        total = pago.total_pagoDocente
+        #insertar el pago
+        global pagoInsertado
+        pagoInsertado=False
+        async with conn.cursor() as cur:
+            await cur.execute("INSERT INTO PagoDocente(docente_pagoDocente, fecha_pagoDocente, faltas_pagoDocente, descuento_pagoDocente, total_pagoDocente) VALUES ({0},'{1}',{2},{3},{4})".format(idDocente,fecha,faltas,descuento,total))
+            await conn.commit()
+            #obtener true si se inserto correctamente
+            if cur.rowcount > 0:
+                pagoInsertado=True
+            else:
+                pagoInsertado=False
+        if pagoInsertado:
+            return {'data': [{'pago':pagoInsertado}], 'accion': True}
+        else:
+            return {'data': [{'pago':pagoInsertado}], 'accion': False}
+    except Exception as error:
+        return {'data': error, 'accion': False}
     finally:
         conn.close()
