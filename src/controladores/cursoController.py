@@ -73,7 +73,7 @@ async def getCursosEstudiante(request: Request, miCurso: getCursoEstudiante = Bo
 
         cursos=[]
         async with conn.cursor() as cur:
-            await cur.execute("SELECT  id_curso, nombre_materia, nombre_paralelo FROM Curso, Paralelo, Materia, Matricula, itemmatricula WHERE estudiante_matricula = '{0}' and id_paralelo = paralelo_curso  and id_materia = materia_curso and id_curso = curso_itemmatricula and id_matricula = matricula_itemmatricula;".format(estudiante_matricula))
+            await cur.execute("SELECT  id_curso, nombre_materia, nombre_paralelo FROM Curso, Paralelo, Materia, Matricula, ItemMatricula WHERE estudiante_matricula = '{0}' and id_paralelo = paralelo_curso  and id_materia = materia_curso and id_curso = curso_itemmatricula and id_matricula = matricula_itemmatricula;".format(estudiante_matricula))
             resultado = await cur.fetchall()
             for result in resultado:
                 curso = {'id_curso': result['id_curso'],'nombre_materia': result['nombre_materia'],'nombre_paralelo': result['nombre_paralelo']}
