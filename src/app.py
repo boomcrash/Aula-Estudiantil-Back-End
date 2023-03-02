@@ -8,6 +8,7 @@ from controladores.moduloController import modulo_router
 from controladores.paraleloController import paralelo_router
 from controladores.medioController import medio_router
 from controladores.rolController import rol_router
+from controladores.cursoController import course_router
 
 #libreria que se importa de configuracion.py (contiene las configuraciones del server)
 from configuracion import configuracion
@@ -33,6 +34,13 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+
+app.include_router(
+    course_router,
+    prefix='/api/v1/cursos',
+    tags=['Cursos'],
+    responses={404: {'description': 'Error de acceso a la ventana de cursos'}},
 )
 
 app.include_router(
