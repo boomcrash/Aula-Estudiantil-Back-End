@@ -9,7 +9,7 @@ from controladores.paraleloController import paralelo_router
 from controladores.medioController import medio_router
 from controladores.rolController import rol_router
 from controladores.cursoController import course_router
-
+from controladores.actaController import acta_router
 #libreria que se importa de configuracion.py (contiene las configuraciones del server)
 from configuracion import configuracion
 #inicializar flask con fastApi
@@ -34,6 +34,15 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+
+acta_router
+
+app.include_router(
+    acta_router,
+    prefix='/api/v1/actas',
+    tags=['Actas'],
+    responses={404: {'description': 'Error de acceso a la ventana de actas'}},
 )
 
 app.include_router(
