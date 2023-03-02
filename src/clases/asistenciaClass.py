@@ -5,3 +5,10 @@ import datetime
 class getAsistenciaEstudianteId(BaseModel):
     estudiante_asistencia: int = None
 
+class getAsistenciaEstudianteByFechaAndCurso(BaseModel):
+    fecha_asistencia: datetime.date = None
+    curso_asistencia: int = None
+
+class getAsistenciaEstudianteByCursoAndEstudiante(BaseModel):
+    curso_asistencia: int = None
+    estudiante_asistencia: int = None
