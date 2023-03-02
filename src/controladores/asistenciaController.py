@@ -9,7 +9,7 @@ from pydantic import BaseModel
 # parametros de peticiones http en body
 from fastapi.param_functions import Body
 #importacion de clases de usuario
-from clases.asistenciaClass import getAsistenciaEstudiante
+from clases.asistenciaClass import getAsistenciaEstudianteId
 
 asistencia_router = APIRouter()
 
@@ -38,7 +38,7 @@ async def getAsistenciasEstudiante():
 
 #metodo get para obtener:id_asistencia,curso_asistencia,estudiante_asistencia,fecha_asistencia,estado_asistencia por estudiante_asistencia
 @asistencia_router.post("/getAsistenciasByIdEstudiante")
-async def getAsistenciasByIdEstudiante(request: Request, asistencia: getAsistenciaEstudiante = Body(...)):
+async def getAsistenciasByIdEstudiante(request: Request, asistencia: getAsistenciaEstudianteId = Body(...)):
     conn = await getConexion()
     try:
         asistencias=[]
