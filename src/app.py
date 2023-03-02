@@ -13,6 +13,7 @@ from controladores.actaController import acta_router
 from controladores.horarioController import horario_router
 from controladores.asistenciaController import asistencia_router
 from controladores.contratoController import contrato_router
+from controladores.evaluacionController import evaluacion_router
 #libreria que se importa de configuracion.py (contiene las configuraciones del server)
 from configuracion import configuracion
 #inicializar flask con fastApi
@@ -39,6 +40,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+#evaluacion_router
+app.include_router(
+    evaluacion_router,
+    prefix='/api/v1/evaluaciones',
+    tags=['Evaluaciones'],
+    responses={404: {'description': 'Error de acceso a la ventana de evaluaciones'}},
+)
 
 #contrato
 app.include_router(

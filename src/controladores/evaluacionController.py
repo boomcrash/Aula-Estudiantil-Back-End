@@ -11,7 +11,7 @@ from fastapi.param_functions import Body
 #importacion de clases de usuario
 from clases.evaluacionClass import getEvaluacionesCursoId
 
-asistencia_router = APIRouter()
+evaluacion_router = APIRouter()
 
 async def getConexion():
     conn = await aiomysql.connect(host=configuracion['development'].MYSQL_HOST, user=configuracion['development'].MYSQL_USER, password=configuracion['development'].MYSQL_PASSWORD, db=configuracion['development'].MYSQL_DB, charset='utf8', cursorclass=aiomysql.DictCursor)
@@ -19,7 +19,7 @@ async def getConexion():
 
 
 #metodo get obtener todas las evaluaciones
-@asistencia_router.get("/getEvaluaciones")
+@evaluacion_router.get("/getEvaluaciones")
 async def getEvaluaciones():
     conn = await getConexion()
     try:
@@ -38,7 +38,7 @@ async def getEvaluaciones():
         conn.close()
 
 #post obtener evaluaciones por curso_evaluacion
-@asistencia_router.post("/getEvaluacionesByIdCurso")
+@evaluacion_router.post("/getEvaluacionesByIdCurso")
 async def getEvaluacionesByIdCurso(request: Request, evaluacion: getEvaluacionesCursoId = Body(...)):
     conn = await getConexion()
     try:
