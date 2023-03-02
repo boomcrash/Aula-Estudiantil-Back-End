@@ -50,7 +50,7 @@ async def getCursosDocente(request: Request, miCurso: getCursoDocente = Body(...
 
         cursos=[]
         async with conn.cursor() as cur:
-            await cur.execute("SELECT  id_curso, nombre_materia, nombre_paralelo FROM curso, paralelo, materia  WHERE docente_curso = '{0}' and id_paralelo = paralelo_curso  and id_materia = materia_curso;".format(docente_curso))
+            await cur.execute("SELECT id_curso, nombre_materia, nombre_paralelo FROM Curso, Paralelo, Materia   WHERE docente_curso = '{0}' and id_paralelo = paralelo_curso  and id_materia = materia_curso;".format(docente_curso))
             resultado = await cur.fetchall()
             for result in resultado:
                 curso = {'id_curso': result['id_curso'],'nombre_materia': result['nombre_materia'],'nombre_paralelo': result['nombre_paralelo']}
@@ -73,7 +73,7 @@ async def getCursosEstudiante(request: Request, miCurso: getCursoEstudiante = Bo
 
         cursos=[]
         async with conn.cursor() as cur:
-            await cur.execute("SELECT  id_curso, nombre_materia, nombre_paralelo FROM curso, paralelo, materia, matricula, itemmatricula WHERE estudiante_matricula = '{0}' and id_paralelo = paralelo_curso  and id_materia = materia_curso and id_curso = curso_itemmatricula and id_matricula = matricula_itemmatricula;".format(estudiante_matricula))
+            await cur.execute("SELECT  id_curso, nombre_materia, nombre_paralelo FROM Curso, Paralelo, Materia, Matricula, itemmatricula WHERE estudiante_matricula = '{0}' and id_paralelo = paralelo_curso  and id_materia = materia_curso and id_curso = curso_itemmatricula and id_matricula = matricula_itemmatricula;".format(estudiante_matricula))
             resultado = await cur.fetchall()
             for result in resultado:
                 curso = {'id_curso': result['id_curso'],'nombre_materia': result['nombre_materia'],'nombre_paralelo': result['nombre_paralelo']}
