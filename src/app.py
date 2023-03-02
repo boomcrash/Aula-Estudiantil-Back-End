@@ -14,6 +14,7 @@ from controladores.horarioController import horario_router
 from controladores.asistenciaController import asistencia_router
 from controladores.contratoController import contrato_router
 from controladores.evaluacionController import evaluacion_router
+from controladores.itemActaController import itemActa_router
 #libreria que se importa de configuracion.py (contiene las configuraciones del server)
 from configuracion import configuracion
 #inicializar flask con fastApi
@@ -38,6 +39,16 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+
+
+
+#itemActa_router
+app.include_router(
+    itemActa_router,
+    prefix='/api/v1/itemActas',
+    tags=['ItemActas'],
+    responses={404: {'description': 'Error de acceso a la ventana de itemActas'}},
 )
 
 #evaluacion_router
