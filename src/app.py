@@ -11,6 +11,7 @@ from controladores.rolController import rol_router
 from controladores.cursoController import course_router
 from controladores.actaController import acta_router
 from controladores.horarioController import horario_router
+from controladores.asistenciaController import asistencia_router
 #libreria que se importa de configuracion.py (contiene las configuraciones del server)
 from configuracion import configuracion
 #inicializar flask con fastApi
@@ -37,6 +38,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+
+
+app.include_router(
+    asistencia_router,
+    prefix='/api/v1/asistencias',
+    tags=['Asistencias'],
+    responses={404: {'description': 'Error de acceso a la ventana de asistencias'}},
+)
 
 app.include_router(
     horario_router,
