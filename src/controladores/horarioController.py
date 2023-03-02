@@ -9,7 +9,7 @@ from pydantic import BaseModel
 # parametros de peticiones http en body
 from fastapi.param_functions import Body
 #importacion de clases de usuario
-from clases.horarioClass import horarioClass,getHorarioPersonalizado,getHorarioDocente
+from clases.horarioClass import horarioClass,getHorarioPersonalizado,getHorarioDocente,getHorarioEstudiante
 
 horario_router = APIRouter()
 
@@ -65,3 +65,37 @@ async def getHorarioDocente(request: Request, miHorario: getHorarioDocente = Bod
         return {'data': '', 'accion': False}
     finally:
         conn.close()
+
+#get getHorarioEstudiante de este sql: Select id_curso, nombre_materia, modulo_materia, nombre_paralelo, 
+#		concat(nombres_docente, ' ',apellidos_docente) as docente_curso,
+#        dia_horario, 
+#        concat(horaInicio_horario, ' - ',horaFin_horario) as hora_horario
+#from Horario, Curso, Materia, Paralelo, Docente, Matricula, ItemMatricula
+#where   estudiante_matricula = 380
+#    and matricula_itemMatricula = id_matricula
+#    and curso_horario = curso_itemMatricula
+#    and curso_horario = id_curso 
+#    and materia_curso = id_materia 
+#	and paralelo_curso = id_paralelo
+#    and docente_curso = id_docente;
+
+@horario_router.post("/getHorarioEstudiante")
+async def getHorarioEstudiante(request: Request, miHorario: getHorarioEstudiante = Body(...)):
+    conn = await getConexion()
+    try:
+        estudiante_matricula = miHorario.estudiante_matricula
+
+        horarios=[]
+        async with conn.cursor() as cur:
+            await cur.execute("Select id_curso, nombre_materia, modulo_materia, nombre_paralelo, concat(nombres_docente, ' ',apellidos_docente) as docente_curso, dia_horario, concat(horaInicio_horario, ' - ',horaFin_horario) as hora_horario from Horario, Curso, Materia, Paralelo, Docente, Matricula, ItemMatricula where estudiante_matricula = '{0}' and matricula_itemMatricula = id_matricula and curso_horario = curso_itemMatricula and curso_horario = id_curso and materia_curso = id_materia and paralelo_curso = id_paralelo and docente_curso = id_docente;".format(estudiante_matricula))
+            resultado = await cur.fetchall()
+            for result in resultado:
+                horario = {'id_curso': result['id_curso'],'nombre_materia': result['nombre_materia'],'modulo_materia': result['modulo_materia'],'nombre_paralelo': result['nombre_paralelo'],'docente_curso': result['docente_curso'],'dia_horario': result['dia_horario'],'hora_horario': result['hora_horario']}
+                horarios.append(horario)
+        return {'data': horarios, 'accion': True}
+    
+    except Exception as e:
+        return {'data': '', 'accion': False}
+    finally:
+        conn.close()
+        

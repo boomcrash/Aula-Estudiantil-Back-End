@@ -15,3 +15,6 @@ class getHorarioPersonalizado(BaseModel):
 
 class getHorarioDocente(BaseModel):
     docente_curso: int = None
+
+class getHorarioEstudiante(BaseModel):
+    estudiante_matricula: int = None
