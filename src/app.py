@@ -16,6 +16,10 @@ from controladores.contratoController import contrato_router
 from controladores.evaluacionController import evaluacion_router
 from controladores.itemActaController import itemActa_router
 from controladores.itemMatriculaController import itemMatricula_router
+from controladores.materiaController import materia_router
+from controladores.matriculaController import matricula_router
+from controladores.ordenPagoMatriculaController import ordenPago_router
+from controladores.pagoDocenteController import pagoDocente_router
 #libreria que se importa de configuracion.py (contiene las configuraciones del server)
 from configuracion import configuracion
 #inicializar flask con fastApi
@@ -43,6 +47,37 @@ app.add_middleware(
 )
 
 
+#pagoDocente_router
+app.include_router(
+    pagoDocente_router,
+    prefix='/api/v1/pagoDocentes',
+    tags=['PagoDocentes'],
+    responses={404: {'description': 'Error de acceso a la ventana de pagoDocentes'}},
+)
+
+#ordenPago_router
+app.include_router(
+    ordenPago_router,
+    prefix='/api/v1/ordenPagoMatriculas',
+    tags=['OrdenPagoMatriculas'],
+    responses={404: {'description': 'Error de acceso a la ventana de ordenPagoMatriculas'}},
+)
+
+#matricula_router
+app.include_router(
+    matricula_router,
+    prefix='/api/v1/matriculas',
+    tags=['Matriculas'],
+    responses={404: {'description': 'Error de acceso a la ventana de matriculas'}},
+)
+
+#materia_router
+app.include_router(
+    materia_router,
+    prefix='/api/v1/materias',
+    tags=['Materias'],
+    responses={404: {'description': 'Error de acceso a la ventana de materias'}},
+)
 
 #itemMatricula_router
 app.include_router(
