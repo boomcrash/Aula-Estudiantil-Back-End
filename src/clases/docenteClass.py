@@ -55,3 +55,7 @@ class addPagoDocente(BaseModel):
     faltas_pagoDocente: int = None
     descuento_pagoDocente: float = None
     total_pagoDocente: float = None
+
+
+class getTop5MayorPuntaje(BaseModel):
+    ciclo_contrato : str = None

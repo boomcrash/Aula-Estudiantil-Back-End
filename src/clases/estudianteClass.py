@@ -46,3 +46,6 @@ class addEstudianteByUserId(BaseModel):
     nivelEducacion_estudiante: str = None
     promedioAnterior_estudiante: float = None
     medio_estudiante: int = None
+
+class getTop5MayorPuntaje(BaseModel):
+    ciclo_matricula  : str = None
