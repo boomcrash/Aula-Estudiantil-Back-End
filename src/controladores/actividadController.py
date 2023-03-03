@@ -29,8 +29,8 @@ async def getConexion():
 #		AND archivo_entrega IS NOT NULL
 #GROUP BY id_actividad;
 
-@actividad_router.post("/getActividadesByCurso")
-async def getActividadesByCurso(request: Request, miCurso: getActividadesByCurso = Body(...), response_model=None):
+@actividad_router.post("/getActividadByCurso")
+async def getActividadByCurso(request: Request, miCurso: getActividadesByCurso = Body(...)):
     conn = await getConexion()
     try:
         curso_actividad = miCurso.curso_actividad
@@ -54,7 +54,7 @@ async def getActividadesByCurso(request: Request, miCurso: getActividadesByCurso
 #		AND actividad_entrega = id_actividad;
 
 @actividad_router.post("/entregaActividad")
-async def entregaActividad(request: Request, miCurso: getActividadesByCurso = Body(...), response_model=None):
+async def entregaActividad(request: Request, miCurso: getActividadesByCurso = Body(...)):
     conn = await getConexion()
     try:
         curso_actividad = miCurso.curso_actividad
