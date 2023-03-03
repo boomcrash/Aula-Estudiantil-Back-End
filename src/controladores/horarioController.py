@@ -29,7 +29,7 @@ async def getAllHorarios():
             await cur.execute("SELECT * FROM Horario")
             resultado = await cur.fetchall()
             for result in resultado:
-                horario = {'id_horario': result['id_horario'],'curso_horario': result['curso_horario'],'dia_horario': result['dia_horario'],'horaInicio_horario': result['horaInicio_horario'],'horaFin_horario': result['horaFin_horario']}
+                horario = {'id_Horario': result['id_Horario'],'curso_horario': result['curso_horario'],'dia_horario': result['dia_horario'],'horaInicio_horario': result['horaInicio_horario'],'horaFin_horario': result['horaFin_horario']}
                 horarios.append(horario)
         return {'data': horarios, 'accion': True}
     except Exception as e:
