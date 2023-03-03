@@ -23,3 +23,5 @@ class getCursoEstudiante(BaseModel):
     #id_curso: int = None
     #id_matricula: int = None
     
+class getParticipantesCurso(BaseModel):
+    id_curso : int = None
