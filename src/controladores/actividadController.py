@@ -9,7 +9,7 @@ from pydantic import BaseModel
 # parametros de peticiones http en body
 from fastapi.param_functions import Body
 #importacion de clases de usuario
-from clases.actaClass import getActividadesByCurso
+from clases.actividadClass import getActividadesByCurso
 
 
 actividad_router = APIRouter()
