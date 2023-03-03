@@ -20,6 +20,8 @@ from controladores.materiaController import materia_router
 from controladores.matriculaController import matricula_router
 from controladores.ordenPagoMatriculaController import ordenPago_router
 from controladores.pagoDocenteController import pagoDocente_router
+from controladores.actividadController import actividad_router
+from controladores.entregaController import entrega_router
 #libreria que se importa de configuracion.py (contiene las configuraciones del server)
 from configuracion import configuracion
 #inicializar flask con fastApi
@@ -46,6 +48,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+
+#entrega_router
+app.include_router(
+    entrega_router,
+    prefix='/api/v1/entregas',
+    tags=['Entregas'],
+    responses={404: {'description': 'Error de acceso a la ventana de entregas'}},
+)
+
+#actividad_router
+app.include_router(
+    actividad_router,
+    prefix='/api/v1/actividades',
+    tags=['Actividades'],
+    responses={404: {'description': 'Error de acceso a la ventana de actividades'}},
+)
 
 #pagoDocente_router
 app.include_router(
