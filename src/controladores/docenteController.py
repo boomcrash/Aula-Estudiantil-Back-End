@@ -13,6 +13,7 @@ from clases.docenteClass import docenteClass
 from clases.docenteClass import addUserAndDocente
 from clases.docenteClass import addDocenteByUserId
 from clases.docenteClass import addPagoDocente
+from clases.docenteClass import getTop5MayorPuntaje
 
 
 teacher_router = APIRouter()
@@ -193,5 +194,34 @@ async def addPaymentTeacher(request: Request, pago: addPagoDocente = Body(...)):
             return {'data': [{'pago':pagoInsertado}], 'accion': False}
     except Exception as error:
         return {'data': error, 'accion': False}
+    finally:
+        conn.close()
+
+
+#get top5mayor puntaje con esta sentencia:
+#SELECT id_docente, 
+#		concat(nombres_docente, ' ', apellidos_docente) AS nombrescompletos_docente,
+#        promedio_docente
+#FROM Docente, Contrato
+#WHERE docente_contrato = id_docente
+#		AND ciclo_contrato = '2022-2023 CI'
+#ORDER BY promedio_docente DESC
+#LIMIT 5;
+
+@teacher_router.post("/getTop5Teacher")
+async def getTop5Teacher(request: Request, puntaje: getTop5MayorPuntaje = Body(...)):
+    conn = await getConexion()
+    try:
+        top5mayorPuntaje = []
+        ciclo = puntaje.ciclo_contrato
+        async with conn.cursor() as cur:
+            await cur.execute("SELECT id_docente, concat(nombres_docente, ' ', apellidos_docente) AS nombrescompletos_docente, promedio_docente FROM Docente, Contrato WHERE docente_contrato = id_docente AND ciclo_contrato = '{0}' ORDER BY promedio_docente DESC LIMIT 5".format(ciclo))
+            result = await cur.fetchall()
+            for top in result:
+                docente= { 'id_docente': top['id_docente'], 'nombrescompletos_docente': top['nombrescompletos_docente'], 'promedio_docente': top['promedio_docente']}
+                top5mayorPuntaje.append(docente)
+        return {'data': top5mayorPuntaje, 'accion': True}
+    except Exception as e:
+        return {'data': '', 'accion': False}
     finally:
         conn.close()

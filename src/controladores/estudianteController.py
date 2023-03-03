@@ -12,6 +12,7 @@ from fastapi.param_functions import Body
 from clases.estudianteClass import estudianteClass
 from clases.estudianteClass import addUserAndStudent
 from clases.estudianteClass import addEstudianteByUserId
+from clases.estudianteClass import getTop5MayorPuntaje
 
 student_router = APIRouter()
 
@@ -137,5 +138,35 @@ async def addEstudianteByUserId(request: Request, estudiante: addEstudianteByUse
             return {'data': [{'estudiante':estudianteInsertado}], 'accion': True}
     except Exception as e:
         return {'data': '', 'accion': "false"}
+    finally:
+        conn.close()
+
+
+#obtener top 5 mayor puntaje por post, con este sql:
+#SELECT id_estudiante, 
+#		concat(nombres_estudiante, ' ', apellidos_estudiante) AS nombrescompletos_estudiante,
+ #       ROUND(avg(promedioCalificaciones_itemActa), 2) AS promedio_estudiante
+#FROM Estudiante, Acta, ItemActa, Matricula
+#WHERE estudiante_matricula = id_estudiante
+#		AND id_estudiante = estudiante_itemActa
+#		AND ciclo_matricula = '2022-2023 CI'
+#group by id_estudiante
+#ORDER BY avg(promedioCalificaciones_itemActa) DESC
+#LIMIT 5;
+
+@student_router.post("/getTop5Estudiantes")
+async def getTop5Estudiantes(request: Request, estudiante: getTop5MayorPuntaje = Body(...)):
+    conn = await getConexion()
+    try:
+        top5MayorPuntaje=[]
+        ciclo=estudiante.ciclo_matricula
+        async with conn.cursor() as cur:
+            await cur.execute("SELECT id_estudiante, concat(nombres_estudiante, ' ', apellidos_estudiante) AS nombrescompletos_estudiante, ROUND(avg(promedioCalificaciones_itemActa), 2) AS promedio_estudiante FROM Estudiante, Acta, ItemActa, Matricula WHERE estudiante_matricula = id_estudiante AND id_estudiante = estudiante_itemActa AND ciclo_matricula = '{0}' group by id_estudiante ORDER BY avg(promedioCalificaciones_itemActa) DESC LIMIT 5".format(ciclo))
+            result = await cur.fetchall()
+            for row in result:
+                top5MayorPuntaje.append({'id_estudiante':row['id_estudiante'],'nombrescompletos_estudiante':row['nombrescompletos_estudiante'],'promedio_estudiante':row['promedio_estudiante']})
+        return {'data': top5MayorPuntaje, 'accion': True}
+    except Exception as e:
+        return {'data': '', 'accion': False}
     finally:
         conn.close()
