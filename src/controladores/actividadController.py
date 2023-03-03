@@ -9,7 +9,7 @@ from pydantic import BaseModel
 # parametros de peticiones http en body
 from fastapi.param_functions import Body
 #importacion de clases de usuario
-from clases.actividadClass import getActividadesByCurso
+from clases.actividadClass import getActividadesByCurso, addActividad, updateActividad,deleteActividad
 
 
 actividad_router = APIRouter()
@@ -72,3 +72,88 @@ async def entregaActividad(request: Request, miCurso: getActividadesByCurso = Bo
         conn.close()
 
 
+#insert into Actividad usando esta sentencia:
+#INSERT INTO Actividad (curso_actividad, fechaPublicacion_actividad, fechaVencimiento_actividad, nombre_actividad, 
+#						descripcion_actividad, archivosPermitidos_actividad, tipo_actividad) VALUES 
+#    (1, '2022-10-03', '2022-10-05', 'Instalación de sistema operativo', 'Realizar la instalación de un sistema operativo en una computadora, siguiendo los pasos y recomendaciones aprendidos en clase. La tarea incluirá la preparación del equipo para la instalación, la selección del sistema operativo adecuado, la creación de particiones en el disco duro y la instalación de los controladores', '.PDF', 'Tarea');
+
+@actividad_router.post("/addActividad")
+async def addActividad(request: Request, miActividad: addActividad = Body(...)):
+    conn = await getConexion()
+    try:
+        curso_actividad = miActividad.curso_actividad
+        fechaVencimiento_actividad = miActividad.fechaVencimiento_actividad
+        fechaPublicacion_actividad = miActividad.fechaPublicacion_actividad
+        nombre_actividad = miActividad.nombre_actividad
+        descripcion_actividad = miActividad.descripcion_actividad
+        archivosPermitidos_actividad = miActividad.archivosPermitidos_actividad
+        tipo_actividad = miActividad.tipo_actividad
+        async with conn.cursor() as cur:
+            await cur.execute("INSERT INTO Actividad (curso_actividad, fechaPublicacion_actividad, fechaVencimiento_actividad, nombre_actividad, descripcion_actividad, archivosPermitidos_actividad, tipo_actividad) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}');".format(curso_actividad, fechaPublicacion_actividad, fechaVencimiento_actividad, nombre_actividad, descripcion_actividad, archivosPermitidos_actividad, tipo_actividad))
+            result= await conn.commit()
+            #validando que se inserto un registro
+            if result == 1:
+                return {'data': {'insertado':True}, 'accion': True}
+            else:
+                return {'data': {'insertado':False}, 'accion': True}
+    except Exception as e:
+        return {'data': '', 'accion': False}
+    finally:
+        conn.close()
+
+#actualizar un registro usando esta sentencia:
+# UPDATE Actividad SET 
+# fechaPublicacion_actividad = '2022-11-02', 
+# fechaVencimiento_actividad = '2022-11-02', 
+# nombre_actividad = 'nfffffffeeee', 
+# descripcion_actividad = 'descrpicffffffoon', 
+# archivosPermitidos_actividad = '.pdf', 
+# tipo_actividad = 'Examen final'
+# WHERE id_actividad = 1;
+
+@actividad_router.put("/updateActividad")
+async def updateActividad(request: Request, miActividad: updateActividad = Body(...)):
+    conn = await getConexion()
+    try:
+        id_actividad = miActividad.id_actividad
+        fechaVencimiento_actividad = miActividad.fechaVencimiento_actividad
+        fechaPublicacion_actividad = miActividad.fechaPublicacion_actividad
+        nombre_actividad = miActividad.nombre_actividad
+        descripcion_actividad = miActividad.descripcion_actividad
+        archivosPermitidos_actividad = miActividad.archivosPermitidos_actividad
+        tipo_actividad = miActividad.tipo_actividad
+        async with conn.cursor() as cur:
+            await cur.execute("UPDATE Actividad SET fechaPublicacion_actividad = '{0}', fechaVencimiento_actividad = '{1}', nombre_actividad = '{2}', descripcion_actividad = '{3}', archivosPermitidos_actividad = '{4}', tipo_actividad = '{5}' WHERE id_actividad = '{6}';".format(fechaPublicacion_actividad, fechaVencimiento_actividad, nombre_actividad, descripcion_actividad, archivosPermitidos_actividad, tipo_actividad, id_actividad))
+            result= await conn.commit()
+            #validando que se inserto un registro
+            if result == 1:
+                return {'data': {'actualizado':True}, 'accion': True}
+            else:
+                return {'data': {'actualizado':False}, 'accion': True}
+    except Exception as e:
+        return {'data': '', 'accion': False}
+    finally:
+        conn.close()
+
+
+#eliminar un registro usando esta sentencia:
+# delete from Actividad 
+# WHERE id_actividad = 1
+
+@actividad_router.delete("/deleteActividad")
+async def deleteActividad(request: Request, miActividad: deleteActividad = Body(...)):
+    conn = await getConexion()
+    try:
+        id_actividad = miActividad.id_actividad
+        async with conn.cursor() as cur:
+            await cur.execute("delete from Actividad WHERE id_actividad = '{0}';".format(id_actividad))
+            result= await conn.commit()
+            #validando que se inserto un registro
+            if result == 1:
+                return {'data': {'eliminado':True}, 'accion': True}
+            else:
+                return {'data': {'eliminado':False}, 'accion': True}
+    except Exception as e:
+        return {'data': '', 'accion': False}
+    finally:
+        conn.close()
