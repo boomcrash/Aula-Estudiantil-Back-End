@@ -90,9 +90,9 @@ async def addActividad(request: Request, miActividad: addActividad = Body(...)):
         tipo_actividad = miActividad.tipo_actividad
         async with conn.cursor() as cur:
             await cur.execute("INSERT INTO Actividad (curso_actividad, fechaPublicacion_actividad, fechaVencimiento_actividad, nombre_actividad, descripcion_actividad, archivosPermitidos_actividad, tipo_actividad) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}');".format(curso_actividad, fechaPublicacion_actividad, fechaVencimiento_actividad, nombre_actividad, descripcion_actividad, archivosPermitidos_actividad, tipo_actividad))
-            await conn.commit()
+            result= await conn.commit()
             #validando que se inserto un registro
-            if cur.rowcount > 0:
+            if result == 1:
                 return {'data': {'insertado':True}, 'accion': True}
             else:
                 return {'data': {'insertado':False}, 'accion': True}
@@ -143,15 +143,18 @@ async def updateActividad(request: Request, miActividad: updateActividad = Body(
 @actividad_router.delete("/deleteActividad")
 async def deleteActividad(request: Request, miActividad: deleteActividad = Body(...)):
     conn = await getConexion()
-    
-    id_actividad = miActividad.id_actividad
-    async with conn.cursor() as cur:
-        await cur.execute("delete from Actividad WHERE id_actividad = '{0}';".format(id_actividad))
-        result= await conn.commit()
-        #validando que se inserto un registro
-        if result == 1:
-            return {'data': {'eliminado':True}, 'accion': True}
-        else:
-            return {'data': {'eliminado':False}, 'accion': True}
-    
-
+    try:
+        id_actividad = miActividad.id_actividad
+        async with conn.cursor() as cur:
+            resultEntrega=await cur.execute("delete from Entrega WHERE actividad_entrega = '{0}';".format(id_actividad))
+        
+            await cur.execute("delete from Actividad WHERE id_actividad = '{0}';".format(id_actividad))
+            resultActividad= await conn.commit()
+            #validando que se inserto un registro
+        
+        return {'data': {'resultEntrega':resultEntrega,'resultActividad':resultActividad}, 'accion': True}
+            
+    except Exception as e:
+        return {'data': '', 'accion': False}
+    finally:
+        conn.close()
