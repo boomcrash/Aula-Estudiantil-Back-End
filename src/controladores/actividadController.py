@@ -93,7 +93,7 @@ async def addActividad(request: Request, miActividad: addActividad = Body(...)):
             await cur.execute("INSERT INTO Actividad (curso_actividad, fechaPublicacion_actividad, fechaVencimiento_actividad, nombre_actividad, descripcion_actividad, archivosPermitidos_actividad, tipo_actividad) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}');".format(curso_actividad, fechaPublicacion_actividad, fechaVencimiento_actividad, nombre_actividad, descripcion_actividad, archivosPermitidos_actividad, tipo_actividad))
             result= await conn.commit()
             #validando que se inserto un registro
-            if result == 1:
+            if cur.rowcount > 0:
                 return {'data': {'insertado':True}, 'accion': True}
             else:
                 return {'data': {'insertado':False}, 'accion': True}
