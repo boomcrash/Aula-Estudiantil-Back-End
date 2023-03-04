@@ -58,9 +58,10 @@ async def entregaActividad(request: Request, miCurso: getActividadesByCurso = Bo
     conn = await getConexion()
     try:
         curso_actividad = miCurso.curso_actividad
+        id_actividad=miCurso.id_actividad
         entregas=[]
         async with conn.cursor() as cur:
-            await cur.execute("SELECT actividad_entrega, estudiante_entrega, fechaEnvio_entrega, fechaModificacion_entrega, archivo_entrega, calificacion_entrega, estado_entrega from Actividad, Entrega where  curso_actividad = '{0}' AND actividad_entrega = id_actividad;".format(curso_actividad))
+            await cur.execute("SELECT actividad_entrega, estudiante_entrega, fechaEnvio_entrega, fechaModificacion_entrega, archivo_entrega, calificacion_entrega, estado_entrega from Actividad, Entrega where  curso_actividad = '{0}' AND actividad_entrega = '{1}';".format(curso_actividad,id_actividad))
             resultado = await cur.fetchall()
             for result in resultado:
                 entrega = {'actividad_entrega': result['actividad_entrega'],'estudiante_entrega': result['estudiante_entrega'],'fechaEnvio_entrega': result['fechaEnvio_entrega'],'fechaModificacion_entrega': result['fechaModificacion_entrega'],'archivo_entrega': result['archivo_entrega'],'calificacion_entrega': result['calificacion_entrega'],'estado_entrega': result['estado_entrega']}
