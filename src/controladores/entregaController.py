@@ -24,6 +24,9 @@ async def getConexion():
 #    estado_entrega = 'Enviada'
 #WHERE actividad_entrega = 1  AND estudiante_entrega = 1;
 
+
+
+
 @entrega_router.post("/updateEntrega")
 async def updateEntrega(request: Request, miEntrega: updateEntrega = Body(...)):
     conn = await getConexion()
@@ -32,14 +35,35 @@ async def updateEntrega(request: Request, miEntrega: updateEntrega = Body(...)):
         fechaModificacion_entrega = miEntrega.fechaModificacion_entrega
         archivo_entrega = miEntrega.archivo_entrega
         estado_entrega = miEntrega.estado_entrega
+        actividad_entrega = miEntrega.actividad_entrega
+        estudiante_entrega = miEntrega.estudiante_entrega
         async with conn.cursor() as cur:
-            await cur.execute("UPDATE Entrega SET fechaEnvio_entrega = '{0}', fechaModificacion_entrega = '{1}', archivo_entrega = '{2}', estado_entrega = '{3}' WHERE actividad_entrega = 1  AND estudiante_entrega = 1;".format(fechaEnvio_entrega, fechaModificacion_entrega, archivo_entrega, estado_entrega))
+            await cur.execute("UPDATE Entrega SET fechaEnvio_entrega = '{0}', fechaModificacion_entrega = '{1}', archivo_entrega = '{2}', estado_entrega = '{3}' WHERE actividad_entrega = '{4}'  AND estudiante_entrega ='{5}';".format(fechaEnvio_entrega, fechaModificacion_entrega, archivo_entrega, estado_entrega,actividad_entrega,estudiante_entrega))
             resultado=await conn.commit()
             #validar que si se actualizo el registro
             if resultado == 1:
                 return {'data': {'actualizado':True}, 'accion': True}
             else:
                 return {'data': {'actualizado':False}, 'accion': True}
+    except Exception as e:
+         return {'data': '', 'accion': False}
+    finally:
+        conn.close()
+
+
+#get todos los registros de la tabla Entrega : id_entrega,actividad_entrega,estudiante_entrega,fechaEnvio_entrega,fechaModificacion_entrega,archivo_entrega,calificacion_entrega,estado_entrega
+#mostrar solo esos parametros
+@entrega_router.get("/getEntregas")
+async def getEntregas():
+    conn = await getConexion()
+    try:
+        entrega=[]
+        async with conn.cursor() as cur:
+            await cur.execute("SELECT id_entrega,actividad_entrega,estudiante_entrega,fechaEnvio_entrega,fechaModificacion_entrega,archivo_entrega,calificacion_entrega,estado_entrega FROM Entrega")
+            resultado=await cur.fetchall()
+            for row in resultado:
+                entrega.append({ 'id_entrega': row['id_entrega'], 'actividad_entrega': row['actividad_entrega'], 'estudiante_entrega': row['estudiante_entrega'], 'fechaEnvio_entrega': row['fechaEnvio_entrega'], 'fechaModificacion_entrega': row['fechaModificacion_entrega'], 'archivo_entrega': row['archivo_entrega'], 'calificacion_entrega': row['calificacion_entrega'], 'estado_entrega': row['estado_entrega']})
+            return {'data': entrega, 'accion': True}
     except Exception as e:
          return {'data': '', 'accion': False}
     finally:

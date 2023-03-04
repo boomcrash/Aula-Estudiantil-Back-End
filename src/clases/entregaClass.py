@@ -7,5 +7,7 @@ class updateEntrega(BaseModel):
     fechaModificacion_entrega  : datetime.date = None
     archivo_entrega  : str = None
     estado_entrega  : str = None
+    actividad_entrega  : int = None
+    estudiante_entrega  : int = None
     
 
