@@ -33,7 +33,7 @@ async def getActaEstudiante(request: Request, miActa: getActaEstudiante = Body(.
 
         actas=[]
         async with conn.cursor() as cur:
-            await cur.execute("SELECT nombre_materia, nombre_paralelo, modulo_materia, promedioCalificaciones_itemActa, promedioAsistencias_itemActa, estado_itemActa FROM ItemActa, Materia, Paralelo, Acta, Curso WHERE estudiante_itemActa = '{0}' and id_acta = acta_itemActa and curso_acta = id_curso and materia_curso = id_materia and paralelo_curso = id_paralelo;".format(estudiante_itemacta))
+            await cur.execute("SELECT nombre_materia, nombre_paralelo, modulo_materia, promedioCalificaciones_itemActa, promedioAsistencias_itemActa, estado_itemActa FROM ItemActa, Materia, Paralelo, Acta, Curso WHERE estudiante_itemActa = '{0}' and id_acta = acta_itemActa and curso_acta = id_curso and materia_curso = id_materia and paralelo_curso = id_paralelo AND estado_acta = 'Activo' ;".format(estudiante_itemacta))
             resultado = await cur.fetchall()
             for result in resultado:
                 acta = {'nombre_materia': result['nombre_materia'],'nombre_paralelo': result['nombre_paralelo'],'modulo_materia': result['modulo_materia'],'promedioCalificaciones_itemActa': result['promedioCalificaciones_itemActa'],'promedioAsistencias_itemActa': result['promedioAsistencias_itemActa'],'estado_itemActa': result['estado_itemActa']}
@@ -62,7 +62,7 @@ async def getActaCurso(request: Request, miActa: getActaCurso = Body(...)):
 
         actas=[]
         async with conn.cursor() as cur:
-            await cur.execute("SELECT CONCAT(nombres_estudiante, ' ', apellidos_estudiante) AS NOMBRESCOMPLETOS_ESTUDIANTE, promedioCalificaciones_itemActa, promedioAsistencias_itemActa, estado_itemacta FROM ItemActa, Acta, Estudiante WHERE id_acta = acta_itemActa and curso_acta = '{0}' and id_estudiante = estudiante_itemActa;".format(curso_acta))
+            await cur.execute("SELECT CONCAT(nombres_estudiante, ' ', apellidos_estudiante) AS nombresCompletos_estudiante, promedioCalificaciones_itemActa, promedioAsistencias_itemActa, estado_itemacta FROM ItemActa, Acta, Estudiante WHERE id_acta = acta_itemActa and curso_acta = '{0}' and id_estudiante = estudiante_itemActa AND estado_acta = 'Activo';".format(curso_acta))
             resultado = await cur.fetchall()
             for result in resultado:
                 acta = {'NOMBRESCOMPLETOS_ESTUDIANTE': result['NOMBRESCOMPLETOS_ESTUDIANTE'],'promedioCalificaciones_itemActa': result['promedioCalificaciones_itemActa'],'promedioAsistencias_itemActa': result['promedioAsistencias_itemActa'],'estado_itemacta': result['estado_itemacta']}

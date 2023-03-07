@@ -74,10 +74,20 @@ async def getCursosEstudiante(request: Request, miCurso: getCursoEstudiante = Bo
 
         cursos=[]
         async with conn.cursor() as cur:
-            await cur.execute("SELECT  id_curso, nombre_materia, nombre_paralelo FROM Curso, Paralelo, Materia, Matricula, ItemMatricula WHERE estudiante_matricula = '{0}' and id_paralelo = paralelo_curso  and id_materia = materia_curso and id_curso = curso_itemmatricula and id_matricula = matricula_itemmatricula;".format(estudiante_matricula))
+            await cur.execute("""SELECT id_curso, nombre_materia, nombre_paralelo, ciclo_curso
+                                FROM Curso 
+                                JOIN Paralelo ON id_paralelo = paralelo_curso
+                                JOIN Materia ON id_materia = materia_curso
+                                JOIN ItemMatricula ON id_curso = curso_itemMatricula
+                                JOIN Matricula ON id_matricula = matricula_itemMatricula
+                                WHERE estudiante_matricula = '{0}'
+                                AND ciclo_curso = (SELECT MAX(ciclo_curso) FROM Curso c2 JOIN ItemMatricula 
+                                ON id_curso = curso_itemMatricula JOIN Matricula ON id_matricula = 
+                                matricula_itemMatricula WHERE estudiante_matricula = 340)
+                                ORDER BY nombre_paralelo ASC;""".format(estudiante_matricula))
             resultado = await cur.fetchall()
             for result in resultado:
-                curso = {'id_curso': result['id_curso'],'nombre_materia': result['nombre_materia'],'nombre_paralelo': result['nombre_paralelo']}
+                curso = {'id_curso': result['id_curso'],'nombre_materia': result['nombre_materia'],'nombre_paralelo': result['nombre_paralelo'], 'ciclo_curso':result['ciclo_curso']}
                 cursos.append(curso)
         return {'data': cursos, 'accion': True}
     

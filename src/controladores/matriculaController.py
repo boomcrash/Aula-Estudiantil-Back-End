@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from fastapi.param_functions import Body
 #importacion de clases de usuario
 from clases.matriculaClass import getItemMatriculaByEstudianteId
+from clases.materiaClass import addOneMatricula
 
 matricula_router = APIRouter()
 
@@ -55,3 +56,28 @@ async def getItemMatriculasByEstudianteId(request: Request, itemMatricula: getIt
     finally:
         conn.close()
 
+
+#addMatricula post addMatricula
+@matricula_router.post("/addMatricula")
+async def addMatricula(request: Request, matricula: addOneMatricula = Body(...)):
+    conn = await getConexion()
+    try:
+        #obtener username por medio del body del api
+        estudiante_matricula = matricula.estudiante_matricula
+        fecha_matricula = matricula.fecha_matricula
+       
+        global insertado
+        insertado=False
+        #insertar matricula
+        async with conn.cursor() as cur:
+            await cur.execute("INSERT INTO Matricula (estudiante_matricula, fecha_matricula) VALUES ('{0}', '{1}');".format(estudiante_matricula,fecha_matricula))
+            await conn.commit()
+            #obtener true si se inserto correctamente
+            if cur.rowcount > 0:
+                insertado=True
+        
+        return {'data': {'insertado':insertado}, 'accion': True}
+    except Exception as e:
+        return {'data': '', 'accion': False}
+    finally:
+        conn.close()

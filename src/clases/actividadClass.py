@@ -4,7 +4,6 @@ import datetime
 
 class getActividadesByCurso(BaseModel):
     curso_actividad : int = None
-    id_actividad : int = None
 
 class addActividad(BaseModel):
     curso_actividad : int = None
