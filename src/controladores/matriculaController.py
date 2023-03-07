@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from fastapi.param_functions import Body
 #importacion de clases de usuario
 from clases.matriculaClass import getItemMatriculaByEstudianteId
-from clases.materiaClass import addOneMatricula
+from clases.matriculaClass import addOneMatricula
 
 matricula_router = APIRouter()
 

@@ -8,3 +8,4 @@ class getItemMatriculasByMatriculaId(BaseModel):
 class addOneItemMatricula(BaseModel):
     matricula_itemMatricula: int = None
     curso_itemMatricula : int = None
+
