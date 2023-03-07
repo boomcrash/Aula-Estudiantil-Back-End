@@ -99,7 +99,7 @@ async def getPagoDocenteByDocenteId(request: Request, pagoDocente: getPagoDocent
             await cur.execute("""SELECT fecha_pagoDocente, sueldo_contrato, faltas_pagoDocente, 
                 descuento_pagoDocente, total_pagoDocente
                 FROM PagoDocente, Contrato
-                WHERE docente_pagoDocente = docente_contrato = '{0}';""",(docente_pagoDocente))
+                WHERE docente_pagoDocente = docente_contrato = '{0}';""".format(docente_pagoDocente))
             resultado = await cur.fetchall()
             for result in resultado:
                 pagoDocente = {'fecha_pagoDocente': result['fecha_pagoDocente']
