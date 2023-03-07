@@ -92,3 +92,20 @@ async def getActaCurso(request: Request, miActa: getActaCurso = Body(...)):
         conn.close()
 
 
+@acta_router.put("/addActa")
+async def addActa(request: Request, acta: getActaCurso = Body(...)):
+    conn = await getConexion()
+    try:
+        curso_acta =acta.curso_acta
+        async with conn.cursor() as cur:
+            await cur.execute("UPDATE Acta SET estado_acta = 'Activo' WHERE curso_acta = '{0}';".format(curso_acta))
+            result= await conn.commit()
+            #validando que se inserto un registro
+            if result == 1:
+                return {'data': {'actualizado':True}, 'accion': True}
+            else:
+                return {'data': {'actualizado':False}, 'accion': True}
+    except Exception as e:
+        return {'data': '', 'accion': False}
+    finally:
+        conn.close()

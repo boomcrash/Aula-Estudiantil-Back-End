@@ -9,7 +9,7 @@ from pydantic import BaseModel
 # parametros de peticiones http en body
 from fastapi.param_functions import Body
 #importacion de clases de usuario
-from clases.asistenciaClass import getAsistenciaEstudianteId,getAsistenciaEstudianteByFechaAndCurso,getAsistenciaEstudianteByCursoAndEstudiante
+from clases.asistenciaClass import addAsistencia,getAsistenciaEstudianteId,getAsistenciaEstudianteByFechaAndCurso,getAsistenciaEstudianteByCursoAndEstudiante
 
 asistencia_router = APIRouter()
 
@@ -108,3 +108,28 @@ async def getAsistenciasByCursoAndEstudiante(request: Request, asistencia: getAs
     finally:
         conn.close()
 
+@asistencia_router.post("/addAsistencia")
+async def addAsistencia(request: Request, asistencia: addAsistencia = Body(...)):
+    conn = await getConexion()
+    try:
+        curso_asistencia = asistencia.curso_asistencia
+        estudiante_asistencia = asistencia.estudiante_asistencia
+        fecha_asistencia = asistencia.fecha_asistencia
+        estado_asistencia = asistencia.estado_asistencia
+
+       
+        global insertado
+        insertado=False
+        #insertar asistencia
+        async with conn.cursor() as cur:
+            await cur.execute("""INSERT INTO Asistencia (curso_asistencia, estudiante_asistencia, fecha_asistencia, estado_asistencia) VALUES ('{0}','{1}','{2}', '{3}');""".format(curso_asistencia,estudiante_asistencia,fecha_asistencia,estado_asistencia))
+            await conn.commit()
+            #obtener true si se inserto correctamente
+            if cur.rowcount > 0:
+                insertado=True
+        
+        return {'data': {'insertado':insertado}, 'accion': True}
+    except Exception as e:
+        return {'data': '', 'accion': False}
+    finally:
+        conn.close()

@@ -9,7 +9,7 @@ from pydantic import BaseModel
 # parametros de peticiones http en body
 from fastapi.param_functions import Body
 #importacion de clases de usuario
-from clases.ordenPagoMatriculaClass import getOrdenPagoMatriculaByIdPago
+from clases.ordenPagoMatriculaClass import getOrdenPagoMatriculaByIdPago,addOneOrdenPagoMatriculas
 ordenPago_router = APIRouter()
 
 async def getConexion():
@@ -49,6 +49,38 @@ async def getItemOrdenPagoMatriculasByMatriculaId(request: Request, itemOrdenPag
                 itemOrdenPagoMatriculas.append(itemOrdenPagoMatricula)
         return {'data': itemOrdenPagoMatriculas, 'accion': True}
     
+    except Exception as e:
+        return {'data': '', 'accion': False}
+    finally:
+        conn.close()
+
+
+@ordenPago_router.post("/addOrdenPagoMatriculas")
+async def addOrdenPagoMatriculas(request: Request, pagoMatricula: addOneOrdenPagoMatriculas = Body(...)):
+    conn = await getConexion()
+    try:
+        #obtener username por medio del body del api
+        matricula_pagoMatricula = pagoMatricula.matricula_pagoMatricula
+        item_pagoMatricula = pagoMatricula.item_pagoMatricula
+        cantidad_pagoMatricula =pagoMatricula.cantidad_pagoMatricula
+        subtotal_pagoMatricula=pagoMatricula.subtotal_pagoMatricula
+        descuento_pagoMatricula=pagoMatricula.descuento_pagoMatricula
+        total_pagoMatricula=pagoMatricula.total_pagoMatricula
+       
+        global insertado
+        insertado=False
+        #insertar ordenPagoMatricula
+        async with conn.cursor() as cur:
+            await cur.execute("""INSERT INTO OrdenPagoMatricula (matricula_pagoMatricula, item_pagoMatricula, 
+                                cantidad_pagoMatricula, subtotal_pagoMatricula, descuento_pagoMatricula, 
+                                total_pagoMatricula) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}');
+                                """.format(matricula_pagoMatricula,item_pagoMatricula,cantidad_pagoMatricula,subtotal_pagoMatricula,descuento_pagoMatricula,total_pagoMatricula))
+            await conn.commit()
+            #obtener true si se inserto correctamente
+            if cur.rowcount > 0:
+                insertado=True
+        
+        return {'data': {'insertado':insertado}, 'accion': True}
     except Exception as e:
         return {'data': '', 'accion': False}
     finally:

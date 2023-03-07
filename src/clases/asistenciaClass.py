@@ -12,3 +12,10 @@ class getAsistenciaEstudianteByFechaAndCurso(BaseModel):
 class getAsistenciaEstudianteByCursoAndEstudiante(BaseModel):
     curso_asistencia: int = None
     estudiante_asistencia: int = None
+
+class addAsistencia(BaseModel):
+      curso_asistencia: int = None
+      estudiante_asistencia: int = None
+      fecha_asistencia: datetime.date = None
+      estado_asistencia: str = None
+
