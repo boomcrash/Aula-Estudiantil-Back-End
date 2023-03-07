@@ -9,7 +9,7 @@ from pydantic import BaseModel
 # parametros de peticiones http en body
 from fastapi.param_functions import Body
 #importacion de clases de usuario
-from clases.actaClass import getActaCurso,getActaEstudiante
+from clases.actaClass import getActaCurso,getActaEstudiante,addActaCurso
 
 acta_router = APIRouter()
 
@@ -93,10 +93,10 @@ async def getActaCurso(request: Request, miActa: getActaCurso = Body(...)):
 
 
 @acta_router.put("/addActa")
-async def addActa(request: Request, acta: getActaCurso = Body(...)):
+async def addActa(request: Request, miActa: addActaCurso = Body(...)):
     conn = await getConexion()
     try:
-        curso_acta =acta.curso_acta
+        curso_acta = miActa.curso_acta
         async with conn.cursor() as cur:
             await cur.execute("UPDATE Acta SET estado_acta = 'Activo' WHERE curso_acta = '{0}';".format(curso_acta))
             result= await conn.commit()

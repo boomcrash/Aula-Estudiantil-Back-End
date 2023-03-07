@@ -11,4 +11,7 @@ class getActaEstudiante(BaseModel):
 
 class getActaCurso(BaseModel):
     curso_acta: int = None
+
+class addActaCurso(BaseModel):
+    curso_acta: int = None
     
