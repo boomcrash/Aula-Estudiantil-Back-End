@@ -64,3 +64,5 @@ class getTop5MayorPuntaje(BaseModel):
 class updateOnePromedioDocente(BaseModel):
     promedio_docente: int = None
     id_docente: int = None
+
+    

@@ -9,7 +9,7 @@ from pydantic import BaseModel
 # parametros de peticiones http en body
 from fastapi.param_functions import Body
 #importacion de clases de usuario
-from clases.pagoDocenteClass import getPagoDocenteByDocenteId
+from clases.pagoDocenteClass import getPagoDocenteByDocenteId,getPagoDocenteId
 pagoDocente_router = APIRouter()
 
 async def getConexion():
@@ -37,7 +37,7 @@ async def getPagoDocentes():
         conn.close()
 
 #post de pago docente by docente_pagoDocente
-@pagoDocente_router.post("/getPagoDocenteByDocenteId")
+@pagoDocente_router.post("/getPagoDocenteWithDocenteId")
 async def getPagoDocenteByDocenteId(request: Request, pagoDocente: getPagoDocenteByDocenteId):
     conn = await getConexion()
     try:
@@ -84,3 +84,33 @@ async def getAdminPagoDocentes():
         conn.close()
 
 
+
+
+
+#post de pago docente by docente_pagoDocente
+@pagoDocente_router.post("/getPagoDocenteByDocenteId")
+async def getPagoDocenteByDocenteId(request: Request, pagoDocente: getPagoDocenteId):
+    conn = await getConexion()
+    try:
+        docente_pagoDocente=pagoDocente.docente_pagoDocente
+
+        pagoDocentes=[]
+        async with conn.cursor() as cur:
+            await cur.execute("""SELECT fecha_pagoDocente, sueldo_contrato, faltas_pagoDocente, 
+                descuento_pagoDocente, total_pagoDocente
+                FROM PagoDocente, Contrato
+                WHERE docente_pagoDocente = docente_contrato = '{0}';""",(docente_pagoDocente))
+            resultado = await cur.fetchall()
+            for result in resultado:
+                pagoDocente = {'fecha_pagoDocente': result['fecha_pagoDocente']
+                               ,'sueldo_contrato': result['sueldo_contrato']
+                               ,'faltas_pagoDocente': result['faltas_pagoDocente']
+                               ,'descuento_pagoDocente': result['descuento_pagoDocente']
+                               ,'total_pagoDocente': result['total_pagoDocente']}
+                pagoDocentes.append(pagoDocente)
+        return {'data': pagoDocentes, 'accion': True}
+    
+    except Exception as e:
+        return {'data': '', 'accion': False}
+    finally:
+        conn.close()
