@@ -170,3 +170,33 @@ async def getTop5Estudiantes(request: Request, estudiante: getTop5MayorPuntaje =
         return {'data': '', 'accion': False}
     finally:
         conn.close()
+
+
+
+
+@student_router.get("/getAdminEstudiantes")
+async def getAdminEstudiantes():
+    conn = await getConexion()
+    try:
+        
+        estudiantes=[]
+        async with conn.cursor() as cur:
+            await cur.execute(r"""SELECT id_estudiante, cedula_estudiante, CONCAT(nombres_estudiante, ' ', apellidos_estudiante) AS nombresCompletos_estudiante, MAX(ciclo_matricula) AS ultimo_ciclo, medio_estudiante
+                    FROM Estudiante
+                    LEFT JOIN Matricula ON id_estudiante = estudiante_matricula
+                    GROUP BY id_estudiante
+                    ORDER BY STR_TO_DATE(SUBSTRING_INDEX(ultimo_ciclo, ' ', 1), '%Y-%Y-%b');
+                    """)
+            resultado = await cur.fetchall()
+            for result in resultado:
+                estudiante = {'id_estudiante': result['id_estudiante']
+                              ,'cedula_estudiante': result['cedula_estudiante']
+                              ,'nombresCompletos_estudiante': result['nombresCompletos_estudiante']
+                              ,'ultimo_ciclo': result['ultimo_ciclo']
+                              ,'medio_estudiante': result['medio_estudiante']}
+                estudiantes.append(estudiante)
+        return {'data': estudiantes, 'accion': True}
+    except Exception as e:
+        return {'data': '', 'accion': False}
+    finally:
+        conn.close()
