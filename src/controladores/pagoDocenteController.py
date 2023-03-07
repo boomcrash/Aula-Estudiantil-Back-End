@@ -63,8 +63,7 @@ async def getAdminPagoDocentes():
         pagoDocentes=[]
         async with conn.cursor() as cur:
             await cur.execute("""SELECT fecha_pagoDocente, sueldo_contrato, faltas_pagoDocente, 
-                                descuento_pagoDocente, total_pagoDocente, cedula_docente, concat(nombres_docente, ' 
-                                ', apellidos_docente) AS nombresCompletos_docente
+                                descuento_pagoDocente, total_pagoDocente, cedula_docente, concat(nombres_docente, ' ', apellidos_docente) AS nombresCompletos_docente
                                 FROM Docente, PagoDocente, Contrato
                                 WHERE docente_pagoDocente = id_docente = docente_contrato;""")
             resultado = await cur.fetchall()
@@ -83,3 +82,5 @@ async def getAdminPagoDocentes():
         return {'data': '', 'accion': False}
     finally:
         conn.close()
+
+

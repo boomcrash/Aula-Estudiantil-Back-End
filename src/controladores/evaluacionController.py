@@ -9,7 +9,7 @@ from pydantic import BaseModel
 # parametros de peticiones http en body
 from fastapi.param_functions import Body
 #importacion de clases de usuario
-from clases.evaluacionClass import getEvaluacionesCursoId,updateOneEvaluacion
+from clases.evaluacionClass import getEvaluacionesCursoId,updateOneEvaluacion,getEvaluacionesDocenteId
 
 evaluacion_router = APIRouter()
 
@@ -74,6 +74,34 @@ async def updateEvaluacion(request: Request, evaluacion: updateOneEvaluacion = B
                 return {'data': {'actualizado':True}, 'accion': True}
             else:
                 return {'data': {'actualizado':False}, 'accion': True}
+    except Exception as e:
+        return {'data': '', 'accion': False}
+    finally:
+        conn.close()
+
+
+
+#post obtener itemActas por estudiante_itemActa
+@evaluacion_router.post("/getEvaluacionesByDocente")
+async def getEvaluacionesByDocente(request: Request, evaluacion: getEvaluacionesDocenteId = Body(...)):
+    conn = await getConexion()
+    try:
+        docente_curso=evaluacion.docente_curso
+        Evaluaciones=[]
+        async with conn.cursor() as cur:
+            await cur.execute("""SELECT nombre_materia, nombre_paralelo, modulo_materia, 
+                concat(cantidad_evaluacion,'/','40') AS evaluo, promedio_evaluacion
+                FROM EvaluacionDocente, Materia, Paralelo, Curso
+                WHERE curso_evaluacion = id_curso
+                AND materia_curso = id_materia
+                AND paralelo_curso = id_paralelo
+                AND docente_curso = '{0}';""".format(docente_curso))
+            resultado = await cur.fetchall()
+            for result in resultado:
+                evaluacion = {'id_itemActa': result['id_itemActa'],'acta_itemActa': result['acta_itemActa'],'estudiante_itemActa': result['estudiante_itemActa'],'promedioCalificaciones_itemActa': result['promedioCalificaciones_itemActa'],'promedioAsistencias_itemActa': result['promedioAsistencias_itemActa'],'estado_itemActa': result['estado_itemActa']}
+                Evaluaciones.append(evaluacion)
+        return {'data': Evaluaciones, 'accion': True}
+    
     except Exception as e:
         return {'data': '', 'accion': False}
     finally:
