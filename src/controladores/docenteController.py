@@ -225,3 +225,35 @@ async def getTop5Teacher(request: Request, puntaje: getTop5MayorPuntaje = Body(.
         return {'data': '', 'accion': False}
     finally:
         conn.close()
+
+
+
+
+@teacher_router.get("/getAdminDocentes")
+async def getAdminDocentes():
+    conn = await getConexion()
+    try:
+        AdminDocentes = []
+        async with conn.cursor() as cur:
+            await cur.execute("""SELECT id_docente, cedula_docente, concat(nombres_docente, ' ', 
+                                apellidos_docente) AS nombresCompletos_docente, ciclo_contrato, estado_docente, 
+                                tipo_contrato
+                                FROM Docente, Contrato
+                                WHERE docente_contrato = id_docente
+                                UNION
+                                SELECT id_docente, cedula_docente, CONCAT(nombres_docente, ' ', 
+                                apellidos_docente) AS nombresCompletos_docente, NULL AS ciclo_contrato, NULL AS 
+                                estado_docente, NULL AS tipo_contrato
+                                FROM Docente
+                                WHERE id_docente NOT IN (SELECT DISTINCT docente_contrato FROM 
+                                Contrato);
+                                """)
+            result = await cur.fetchall()
+            for top in result:
+                AdminDocente= { 'id_docente': top['id_docente'], 'cedula_docente': top['cedula_docente'], 'nombresCompletos_docente': top['nombresCompletos_docente'],'ciclo_contrato': top['ciclo_contrato'],'estado_docente': top['estado_docente'],'tipo_contrato': top['tipo_contrato']}
+                AdminDocentes.append(AdminDocente)
+        return {'data': AdminDocentes, 'accion': True}
+    except Exception as e:
+        return {'data': '', 'accion': False}
+    finally:
+        conn.close()

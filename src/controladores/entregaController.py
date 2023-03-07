@@ -9,7 +9,7 @@ from pydantic import BaseModel
 # parametros de peticiones http en body
 from fastapi.param_functions import Body
 #importacion de clases de usuario
-from clases.entregaClass import updateEntrega
+from clases.entregaClass import updateEntrega,addOneCalificacion
 
 
 entrega_router = APIRouter()
@@ -66,5 +66,31 @@ async def getEntregas():
             return {'data': entrega, 'accion': True}
     except Exception as e:
          return {'data': '', 'accion': False}
+    finally:
+        conn.close()
+
+
+
+@entrega_router.put("/addCalificacion")
+async def addCalificacion(request: Request, entrega: addOneCalificacion = Body(...)):
+    conn = await getConexion()
+    try:
+        actividad_entrega=entrega.actividad_entrega
+        estudiante_entrega=entrega.estudiante_entrega
+        calificacion_entrega=entrega.calificacion_entrega
+
+        async with conn.cursor() as cur:
+            await cur.execute("""UPDATE Entrega 
+                                SET calificacion_entrega = '{0}'
+                                WHERE actividad_entrega = '{1}' AND estudiante_entrega = '{2}';""".format(calificacion_entrega, actividad_entrega, estudiante_entrega))
+            result= await conn.commit()
+            #validando que se inserto un registro
+            print(result)
+            if result == 1:
+                return {'data': {'actualizado':True}, 'accion': True}
+            else:
+                return {'data': {'actualizado':False}, 'accion': True}
+    except Exception as e:
+        return {'data': '', 'accion': False}
     finally:
         conn.close()

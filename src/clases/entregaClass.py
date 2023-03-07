@@ -10,4 +10,7 @@ class updateEntrega(BaseModel):
     actividad_entrega  : int = None
     estudiante_entrega  : int = None
     
-
+class addOneCalificacion(BaseModel):
+    actividad_entrega : int =None
+    estudiante_entrega : int =None
+    calificacion_entrega : float =None

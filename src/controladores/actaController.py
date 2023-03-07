@@ -100,6 +100,7 @@ async def addActa(request: Request, miActa: addActaCurso = Body(...)):
         async with conn.cursor() as cur:
             await cur.execute("UPDATE Acta SET estado_acta = 'Activo' WHERE curso_acta = '{0}';".format(curso_acta))
             result= await conn.commit()
+            print(result)
             #validando que se inserto un registro
             if result == 1:
                 return {'data': {'actualizado':True}, 'accion': True}
