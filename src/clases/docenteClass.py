@@ -59,3 +59,8 @@ class addPagoDocente(BaseModel):
 
 class getTop5MayorPuntaje(BaseModel):
     ciclo_contrato : str = None
+
+
+class updateOnePromedioDocente(BaseModel):
+    promedio_docente: int = None
+    id_docente: int = None

@@ -13,7 +13,7 @@ from clases.docenteClass import docenteClass
 from clases.docenteClass import addUserAndDocente
 from clases.docenteClass import addDocenteByUserId
 from clases.docenteClass import addPagoDocente
-from clases.docenteClass import getTop5MayorPuntaje
+from clases.docenteClass import getTop5MayorPuntaje,updateOnePromedioDocente
 
 
 teacher_router = APIRouter()
@@ -253,6 +253,28 @@ async def getAdminDocentes():
                 AdminDocente= { 'id_docente': top['id_docente'], 'cedula_docente': top['cedula_docente'], 'nombresCompletos_docente': top['nombresCompletos_docente'],'ciclo_contrato': top['ciclo_contrato'],'estado_docente': top['estado_docente'],'tipo_contrato': top['tipo_contrato']}
                 AdminDocentes.append(AdminDocente)
         return {'data': AdminDocentes, 'accion': True}
+    except Exception as e:
+        return {'data': '', 'accion': False}
+    finally:
+        conn.close()
+
+
+
+@teacher_router.put("/updatePromedioDocente")
+async def updatePromedioDocente(request: Request, docente: updateOnePromedioDocente = Body(...)):
+    conn = await getConexion()
+    try:
+        promedio_docente = docente.promedio_docente
+        id_docente=docente.id_docente
+        async with conn.cursor() as cur:
+            await cur.execute("UPDATE Docente  SET promedio_docente = '{0}' WHERE id_docente = '{1}'; ".format(promedio_docente,id_docente))
+            result= await conn.commit()
+            print(result)
+            #validando que se inserto un registro
+            if result !=None:
+                return {'data': {'actualizado':True}, 'accion': True}
+            else:
+                return {'data': {'actualizado':False}, 'accion': True}
     except Exception as e:
         return {'data': '', 'accion': False}
     finally:
