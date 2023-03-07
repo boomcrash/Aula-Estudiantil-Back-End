@@ -36,7 +36,15 @@ async def getActividadByCurso(request: Request, miCurso: getActividadesByCurso =
         curso_actividad = miCurso.curso_actividad
         actividades=[]
         async with conn.cursor() as cur:
-            await cur.execute("SELECT id_actividad, fechaPublicacion_actividad, fechaVencimiento_actividad, nombre_actividad, descripcion_actividad, archivosPermitidos_actividad, tipo_actividad, count(archivo_entrega) AS envios from Actividad, Entrega where  curso_actividad = '{0}' AND actividad_entrega = id_actividad AND archivo_entrega IS NOT NULL GROUP BY id_actividad;".format(curso_actividad))
+            await cur.execute("""SELECT id_actividad, fechaPublicacion_actividad, 
+                    fechaVencimiento_actividad, nombre_actividad, 
+                    descripcion_actividad, archivosPermitidos_actividad, 
+                    tipo_actividad, count(archivo_entrega) AS envios
+                    from Actividad, Entrega
+                    where curso_actividad = '{0}'
+                    AND actividad_entrega = id_actividad
+                    GROUP BY id_actividad;
+                    """.format(curso_actividad))
             resultado = await cur.fetchall()
             for result in resultado:
                 actividad = {'id_actividad': result['id_actividad'],'fechaPublicacion_actividad': result['fechaPublicacion_actividad'],'fechaVencimiento_actividad': result['fechaVencimiento_actividad'],'nombre_actividad': result['nombre_actividad'],'descripcion_actividad': result['descripcion_actividad'],'archivosPermitidos_actividad': result['archivosPermitidos_actividad'],'tipo_actividad': result['tipo_actividad'],'envios': result['envios']}
