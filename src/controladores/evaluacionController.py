@@ -98,7 +98,11 @@ async def getEvaluacionesByDocente(request: Request, evaluacion: getEvaluaciones
                 AND docente_curso = '{0}';""".format(docente_curso))
             resultado = await cur.fetchall()
             for result in resultado:
-                evaluacion = {'id_itemActa': result['id_itemActa'],'acta_itemActa': result['acta_itemActa'],'estudiante_itemActa': result['estudiante_itemActa'],'promedioCalificaciones_itemActa': result['promedioCalificaciones_itemActa'],'promedioAsistencias_itemActa': result['promedioAsistencias_itemActa'],'estado_itemActa': result['estado_itemActa']}
+                evaluacion = {'nombre_materia': result['nombre_materia']
+                              ,'nombre_paralelo': result['nombre_paralelo']
+                              ,'modulo_materia': result['modulo_materia']
+                              ,'evaluo': result['evaluo']
+                              ,'promedio_evaluacion': result['promedio_evaluacion']}
                 Evaluaciones.append(evaluacion)
         return {'data': Evaluaciones, 'accion': True}
     
