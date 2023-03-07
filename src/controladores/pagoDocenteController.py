@@ -37,8 +37,8 @@ async def getPagoDocentes():
         conn.close()
 
 #post de pago docente by docente_pagoDocente
-@pagoDocente_router.post("/getPagoDocenteWithDocenteId")
-async def getPagoDocenteByDocenteId(request: Request, pagoDocente: getPagoDocenteByDocenteId):
+@pagoDocente_router.post("/getByPagoDocente")
+async def getByDocenteId(request: Request, pagoDocente: getPagoDocenteByDocenteId):
     conn = await getConexion()
     try:
         pagoDocentes=[]
@@ -96,10 +96,10 @@ async def getPagoDocenteByDocenteId(request: Request, pagoDocente: getPagoDocent
 
         pagoDocentes=[]
         async with conn.cursor() as cur:
-            await cur.execute("""SELECT fecha_pagoDocente, sueldo_contrato, faltas_pagoDocente, 
-                descuento_pagoDocente, total_pagoDocente
+            await cur.execute("""SELECT fecha_pagoDocente, sueldo_contrato, faltas_pagoDocente, descuento_pagoDocente, total_pagoDocente
                 FROM PagoDocente, Contrato
-                WHERE docente_pagoDocente = docente_contrato = '{0}';""".format(docente_pagoDocente))
+                WHERE docente_pagoDocente = docente_contrato
+                        AND docente_contrato = '{0}';""".format(docente_pagoDocente))
             resultado = await cur.fetchall()
             for result in resultado:
                 pagoDocente = {'fecha_pagoDocente': result['fecha_pagoDocente']
