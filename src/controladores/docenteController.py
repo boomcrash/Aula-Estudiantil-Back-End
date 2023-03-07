@@ -269,7 +269,8 @@ async def updatePromedioDocente(request: Request, docente: updateOnePromedioDoce
         async with conn.cursor() as cur:
             await cur.execute("UPDATE Docente  SET promedio_docente = '{0}' WHERE id_docente = '{1}'; ".format(promedio_docente,id_docente))
             result= await conn.commit()
-            print(cur)
+            print(cur.rownumber)
+            print(cur.rowcount)
             #validando que se inserto un registro
             if result !=None:
                 return {'data': {'actualizado':True}, 'accion': True}
