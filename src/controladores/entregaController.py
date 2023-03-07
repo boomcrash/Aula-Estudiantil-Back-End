@@ -86,7 +86,7 @@ async def addCalificacion(request: Request, entrega: addOneCalificacion = Body(.
             result= await conn.commit()
             #validando que se inserto un registro
             print(result)
-            if result == 1:
+            if cur.rowcount>0:
                 return {'data': {'actualizado':True}, 'accion': True}
             else:
                 return {'data': {'actualizado':False}, 'accion': True}

@@ -90,7 +90,7 @@ async def addContrato(request: Request, contrato: addOneContrato = Body(...)):
             
             update=await cur.execute("UPDATE Docente SET estado_docente = 'Activo' WHERE id_docente = '{0}';".format(docente_contrato))
             result2= await conn.commit()
-            if update.cur!=None:
+            if cur.rowcount>0:
                 actualizado=True
             
             return {'data': {'insertado':insertado,'actualizado':actualizado}, 'accion': True}

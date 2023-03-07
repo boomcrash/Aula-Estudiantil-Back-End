@@ -70,7 +70,7 @@ async def updateEvaluacion(request: Request, evaluacion: updateOneEvaluacion = B
             result= await conn.commit()
             print(result)
             #validando que se inserto un registro
-            if result !=None:
+            if cur.rowcount>0:
                 return {'data': {'actualizado':True}, 'accion': True}
             else:
                 return {'data': {'actualizado':False}, 'accion': True}

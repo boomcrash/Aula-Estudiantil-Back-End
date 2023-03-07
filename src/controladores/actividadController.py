@@ -128,7 +128,7 @@ async def updateActividad(request: Request, miActividad: updateActividad = Body(
             await cur.execute("UPDATE Actividad SET fechaPublicacion_actividad = '{0}', fechaVencimiento_actividad = '{1}', nombre_actividad = '{2}', descripcion_actividad = '{3}', archivosPermitidos_actividad = '{4}', tipo_actividad = '{5}' WHERE id_actividad = '{6}';".format(fechaPublicacion_actividad, fechaVencimiento_actividad, nombre_actividad, descripcion_actividad, archivosPermitidos_actividad, tipo_actividad, id_actividad))
             result= await conn.commit()
             #validando que se inserto un registro
-            if result == 1:
+            if cur.rowcount>0:
                 return {'data': {'actualizado':True}, 'accion': True}
             else:
                 return {'data': {'actualizado':False}, 'accion': True}

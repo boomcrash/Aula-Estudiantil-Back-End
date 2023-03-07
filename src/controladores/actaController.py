@@ -102,7 +102,7 @@ async def addActa(request: Request, miActa: addActaCurso = Body(...)):
             result= await conn.commit()
             print(result)
             #validando que se inserto un registro
-            if result == 1:
+            if cur.rowcount>0:
                 return {'data': {'actualizado':True}, 'accion': True}
             else:
                 return {'data': {'actualizado':False}, 'accion': True}
