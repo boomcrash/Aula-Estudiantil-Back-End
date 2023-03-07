@@ -9,7 +9,7 @@ from pydantic import BaseModel
 # parametros de peticiones http en body
 from fastapi.param_functions import Body
 #importacion de clases de usuario
-from clases.entregaClass import updateEntrega,addOneCalificacion
+from clases.entregaClass import updateEntrega,addOneCalificacion,entregaAdmin
 
 
 entrega_router = APIRouter()
@@ -27,7 +27,7 @@ async def getConexion():
 
 
 
-@entrega_router.post("/updateEntrega")
+@entrega_router.put("/updateEntrega")
 async def updateEntrega(request: Request, miEntrega: updateEntrega = Body(...)):
     conn = await getConexion()
     try:
@@ -90,6 +90,37 @@ async def addCalificacion(request: Request, entrega: addOneCalificacion = Body(.
                 return {'data': {'actualizado':True}, 'accion': True}
             else:
                 return {'data': {'actualizado':False}, 'accion': True}
+    except Exception as e:
+        return {'data': '', 'accion': False}
+    finally:
+        conn.close()
+
+
+
+
+@entrega_router.post("/GetEntregasAdmin")
+async def GetEntregasAdmin(request: Request, miEntrega: entregaAdmin = Body(...)):
+    conn = await getConexion()
+    try:
+        curso_actividad = miEntrega.curso_actividad
+        estudiante_entrega=miEntrega.estudiante_entrega
+        estado_entrega=miEntrega.estado_entrega
+        entregas=[]
+        async with conn.cursor() as cur:
+            await cur.execute("""SELECT nombre_actividad
+                from Actividad, Entrega
+                where curso_actividad = '{0}'
+                AND actividad_entrega = id_actividad
+                AND estado_entrega = '{1}'
+                AND estudiante_entrega = '{2}';""".format(curso_actividad, estado_entrega, estudiante_entrega))
+            resultado=await conn.commit()
+            #validar que si se actualizo el registro
+            resultado = await cur.fetchall()
+            for result in resultado:
+                entrega = {'nombre_actividad': result['nombre_actividad']}
+                entregas.append(entrega)
+        return {'data': entregas, 'accion': True}
+    
     except Exception as e:
         return {'data': '', 'accion': False}
     finally:

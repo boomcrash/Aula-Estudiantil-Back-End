@@ -14,3 +14,11 @@ class addOneCalificacion(BaseModel):
     actividad_entrega : int =None
     estudiante_entrega : int =None
     calificacion_entrega : float =None
+
+
+
+class entregaAdmin(BaseModel):
+    curso_actividad : int =None
+    estudiante_entrega : int =None
+    estado_entrega : str =None
+
