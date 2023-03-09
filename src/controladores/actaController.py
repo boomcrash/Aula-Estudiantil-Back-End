@@ -76,12 +76,12 @@ async def getActaCurso(request: Request, miActa: getActaCurso = Body(...)):
                             estado_itemActa 
                             FROM ItemActa, Acta, Estudiante
                             WHERE   id_acta = acta_itemActa 
-                            and curso_acta = 1
+                            and curso_acta = '{0}'
                             and id_estudiante = estudiante_itemacta
                             AND estado_acta = 'Activo';""".format(curso_acta))
             resultado = await cur.fetchall()
             for result in resultado:
-                acta = {'NOMBRESCOMPLETOS_ESTUDIANTE': result['NOMBRESCOMPLETOS_ESTUDIANTE'],'promedioCalificaciones_itemActa': result['promedioCalificaciones_itemActa'],'promedioAsistencias_itemActa': result['promedioAsistencias_itemActa'],'estado_itemacta': result['estado_itemacta']}
+                acta = {'nombresCompletos_estudiante': result['nombresCompletos_estudiante'],'promedioCalificaciones_itemActa': result['promedioCalificaciones_itemActa'],'promedioAsistencias_itemActa': result['promedioAsistencias_itemActa'],'estado_itemacta': result['estado_itemacta']}
                 actas.append(acta)
         return {'data': actas, 'accion': True}
 
